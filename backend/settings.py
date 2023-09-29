@@ -17,27 +17,39 @@ import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
-
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5r#xglib)6ji)aztao)nc^_z6yb22!=)7vflxlmlls%au!0(7v'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+if DEBUG:
+    msg = "Running in DEBUG mode."
+    print('\u001b[35m'+msg+'\u001b[0m')
+    dotenv_file = os.path.join(BASE_DIR, ".env_local")
+else:
+    msg = "Running in PRODUCTION mode"
+    print('\033[93m'+msg+'\033[0m')
+    print('\u001b[35m'+msg+'\u001b[0m')
+    dotenv_file = os.path.join(BASE_DIR, ".env_prod")
+
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+else:
+    print("WARNING: No .env file found.")
 
 
+# SECURITY WARNING: keep the secret key used in production secret!
+if DEBUG:
+    SECRET_KEY = 'django-insecure-5r#xglib)6ji)aztao)nc^_z6yb22!=)7vflxlmlls%au!0(7v'
+else:
+    SECRET_KEY = os.environ['SECRET_KEY']
+
+
+# ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(' ')
+    
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,20 +57,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps', # for sitemap
+    # third party apps
     'graphene_django',
     'ckeditor',
     'pyuca',
 
-
+    # installed apps
     'advertisement',
     'article',
     'categories',
-    'homepage',
     'news',
     'reporter',
     'search',
     'webInfo',
 
+]
+
+# Apps for testing or in development
+if DEBUG: 
+    INSTALLED_APPS += [   
+     'homepage',
 ]
 
 MIDDLEWARE = [
@@ -95,62 +114,61 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# for vercel postgres
+if DEBUG: 
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
+        }
+    }
+    
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ['PGDATABASE'],
+            'USER': os.environ['PGUSER'],
+            'PASSWORD': os.environ['PGPASSWORD'],
+            'HOST': os.environ['PGHOST'],
+            'PORT': os.environ['PGPORT'],
+           
+        }
+    }
+
+# # for postgres // railway
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'URL': os.environ['POSTGRES_URL'],
-#         'NAME': os.environ['POSTGRES_DATABASE'],
-#         'USER': os.environ['POSTGRES_USER'],
-#         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-#         'HOST': os.environ['POSTGRES_HOST'],
+#         'URL': os.environ['DATABASE_URL'],
+#         'NAME': os.environ['PGDATABASE'],
+#         'USER': os.environ['PGUSER'],
+#         'PASSWORD': os.environ['PGPASSWORD'],
+#         'HOST': os.environ['PGHOST'],
+#         'PORT': os.environ['PGPORT'],
        
 #     }
 # }
-
-
-# for railway
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'URL': os.environ['DATABASE_URL'],
-        'NAME': os.environ['PGDATABASE'],
-        'USER': os.environ['PGUSER'],
-        'PASSWORD': os.environ['PGPASSWORD'],
-        'HOST': os.environ['PGHOST'],
-        'PORT': os.environ['PGPORT'],
-       
-    }
-}
-
-
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    # },
-]
+if DEBUG:
+    AUTH_PASSWORD_VALIDATORS = []
+else:
+    AUTH_PASSWORD_VALIDATORS = [
+        {
+            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        },
+    ]
 
 
 # Internationalization
@@ -158,7 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dhaka'
 
 USE_I18N = True
 
@@ -182,4 +200,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 GRAPHENE = {
     "SCHEMA": "backend.schema.schema"
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'sql.log',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }

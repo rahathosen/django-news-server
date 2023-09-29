@@ -12,8 +12,7 @@ class PostType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     post = graphene.Field(PostType, id=graphene.Int())
-    posts = graphene.List(PostType, first = graphene.Int(), skip = graphene.Int())
-
+   
     today_posts = graphene.List(PostType)
     last_week_popular_post  = graphene.List(PostType)
     last_month_popular_post = graphene.List(PostType)

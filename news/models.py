@@ -30,6 +30,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200,  blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     tag = models.ManyToManyField(PostsTag, blank=True)
+    related_post = models.ManyToManyField('self', blank=True)
     image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500)
     videoLink = models.CharField(max_length=200,null=True,blank=True)
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING,default=1, blank=False, null=False)

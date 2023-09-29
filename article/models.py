@@ -73,8 +73,8 @@ class ArticleWritter(models.Model):
 class Article(models.Model):
     # language = models.ForeignKey(Language, on_delete=models.DO_NOTHING, blank=False, null=False, default= 1)
     title = models.CharField(max_length=200,  blank=True, null=True)
-    category = models.ForeignKey(ArticleCategory, on_delete=models.DO_NOTHING, blank=False, null=False)
-    writter = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, blank=False, null=False)
+    category = models.ForeignKey(ArticleCategory, on_delete=models.DO_NOTHING, default=1, blank=False, null=False)
+    writter = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, default=1, blank=False, null=False)
     tag = models.ManyToManyField(PostsTag, blank=False)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Images',max_length=500)
