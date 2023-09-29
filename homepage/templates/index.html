@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>News Server</title>
+    <!-- <link rel="stylesheet" type="text/css" href="styles.css" /> -->
+    <style>
+      /* Center the content vertically and horizontally */
+      .title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Style for links */
+      a {
+        margin: 10px;
+        font-size: 18px;
+        text-decoration: none;
+        color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">
+      <h1>News Server</h1>
+    </div>
+    <div class="list">
+      <a href="/admin/">Admin</a>
+      <a href="/graphql/">GraphQL</a>
+    </div>
+    <h4 class="title">query sample</h4>
+    <div class="title" id="codebox">
+      <pre class="code-block" data-language="query">
+            <code>
+                query {
+                    allPost(categoryId: 1) {
+                      id
+                      title
+                      content
+                      author
+                      category {
+                        id
+                        name
+                      }
+                    }
+                  }
+                  
+            </code>
+        </pre>
+    </div>
+  </body>
+</html>
