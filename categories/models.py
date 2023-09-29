@@ -1,0 +1,351 @@
+from django.db import models
+from ckeditor.fields import RichTextField
+from django.utils.text import slugify
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from reporter.models import Reporter
+
+STATUS = (
+    (0,"Draft"),
+    (1,"Publish")
+)
+YESNO = (
+    (0,"No"),
+    (1,"Yes")
+)
+
+class Continents(models.Model):
+    uniqueId = models.CharField(max_length=20, blank=False, null=False)
+    name = models.CharField(max_length=20)
+    image = models.ImageField(upload_to='News/Categories/Continents/',blank=True, null=True)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'Continents'
+        verbose_name = 'Continent'
+
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Continents/', output.getvalue(), None)
+        super(Continents, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.name}"
+            self.url = self.name.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+    
+class Country(models.Model):
+    uniqueId = models.CharField(max_length=50, blank=False, null=False)
+    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/Country/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+  
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'Countries'
+        verbose_name = 'Country'
+    
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Country/', output.getvalue(), None)
+        super(Country, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.name}"
+            self.url = self.name.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+
+class Division(models.Model):
+    uniqueId = models.CharField(max_length=50, blank=False, null=False)
+    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/Division/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'Divisions'
+        verbose_name = 'Division'
+
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Division/', output.getvalue(), None)
+        super(Division, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.name}"
+            self.url = self.name.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+
+class District(models.Model):
+    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/District/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'Districts'
+        verbose_name = 'District'
+   
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/District/', output.getvalue(), None)
+        super(District, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.name}"
+            self.url = self.name.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+
+class Upozila(models.Model):
+    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/Upozila/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'Upozilas'
+        verbose_name = 'Upozila'
+   
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Upozila/', output.getvalue(), None)
+        super(Upozila, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.name}"
+            self.url = self.name.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+
+class CityCorporation(models.Model):
+    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True)
+    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/CityCorporation/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'City Corporations'
+        verbose_name = 'City Corporation'
+   
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/CityCorporation/', output.getvalue(), None)
+        super(CityCorporation, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.name}"
+            self.url = self.name.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+   
+class ZipPostalCode(models.Model):
+    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True)
+    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True)
+    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null=True)
+    cityCorporation = models.ForeignKey(CityCorporation, on_delete=models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=20)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/ZipPostalCode/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'Zip Postal Codes'
+        verbose_name = 'Zip Postal Code'
+   
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):        
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/ZipPostalCode/', output.getvalue(), None)
+        super(ZipPostalCode, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.name}"
+            self.url = self.name.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+        
+class NewsCategory(models.Model):
+    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='News/Categories/Category/',blank=True, null=True)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    status = models.IntegerField(choices=STATUS, default = 1)
+    serial = models.PositiveIntegerField(default=0,blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'News Categories'
+        verbose_name = 'News Category'
+   
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Category/', output.getvalue(), None)
+        super(NewsCategory, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.title}"
+            self.url = self.title.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)  
+  
+class NewsSubCategory(models.Model):
+    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False)
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='News/Categories/SubCategory/',blank=True, null=True)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    status = models.IntegerField(choices=STATUS, default = 1)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+   
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'News Sub Categories'
+        verbose_name = 'News Sub Category'
+   
+    def __str__(self):
+        return self.title + ' - Category: ' + str(self.categoryId.title)
+    
+    def save(self, *args, **kwargs):
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/SubCategory/', output.getvalue(), None)
+        super(NewsSubCategory, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.title}"
+            self.url = self.title.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+
+class PostsTag(models.Model):
+    title = models.CharField(max_length=200)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    details = RichTextField(blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/Tags/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["serial"]
+        verbose_name_plural = 'Post Tags'
+        verbose_name = 'Post Tag'
+
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):        
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Tags/', output.getvalue(), None)
+        super(PostsTag, self).save(*args, **kwargs)
+    # for url
+        if not self.url:
+            slug_str = f"{self.title}"
+            self.url = self.title.replace(" ", "-").replace(",", "")
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)

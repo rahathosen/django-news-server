@@ -1,20 +1,21 @@
 import graphene
-#import graphql_jwt
+import webInfo.apiSchema
 
-import news.newsSchema
+import news.apiSchema
 
     
 class Query(
 
     # Add your Query objects here
-    news.newsSchema.Query,
+     webInfo.apiSchema.Query,
+    news.apiSchema.Query,
     graphene.ObjectType
 ):
     pass
 
 class Mutation(
     # Add your Mutation objects here
-    news.newsSchema.Mutation,
+    webInfo.apiSchema.Mutation,
     graphene.ObjectType
 ):
     pass
