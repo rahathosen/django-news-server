@@ -112,7 +112,7 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # for railway
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': os.environ['PGENGINE'],
         'URL': os.environ['DATABASE_URL'],
         'NAME': os.environ['PGDATABASE'],
         'USER': os.environ['PGUSER'],
