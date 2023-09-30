@@ -17,7 +17,7 @@ YESNO = (
 )
 
 class Continents(models.Model):
-    uniqueId = models.CharField(max_length=20, blank=False, null=False)
+    uniqueId = models.CharField(max_length=20, blank=False, null=False, verbose_name='Continent Name in English without Space')
     name = models.CharField(max_length=20)
     image = models.ImageField(upload_to='News/Categories/Continents/',blank=True, null=True)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -43,15 +43,19 @@ class Continents(models.Model):
     # for url
         if not self.url:
             slug_str = f"{self.name}"
-            self.url = self.name.replace(" ", "-").replace(",", "")
+            self.url = self.name.replace(" ", "-").replace(",", "").replace(".", "").replace("-","")
         if self.url:
             self.url = self.url.replace(" ", "").replace(",", "")
         return super().save(*args, **kwargs)
     
 class Country(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Country Name in English without Space')
+    cCode = models.CharField(max_length=4, blank=False, null=False, verbose_name='Country Code')
     continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=50)
+    capital = models.CharField(max_length=20, blank=True, null=True)
+    currency = models.CharField(max_length=20, blank=True, null=True)
+    language = models.CharField(max_length=20, blank=True, null=True)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Country/',blank=True, null=True)
     url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
@@ -82,9 +86,9 @@ class Country(models.Model):
         return super().save(*args, **kwargs)
 
 class Division(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Division Name in English without Space')
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Division/',blank=True, null=True)
     url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
@@ -115,9 +119,9 @@ class Division(models.Model):
         return super().save(*args, **kwargs)
 
 class District(models.Model):
-    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='District Name in English without Space')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/District/',blank=True, null=True)
     url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
@@ -148,9 +152,9 @@ class District(models.Model):
         return super().save(*args, **kwargs)
 
 class Upozila(models.Model):
-    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Upozila Name in English without Space')
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Upozila/',blank=True, null=True)
     url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
@@ -181,10 +185,10 @@ class Upozila(models.Model):
         return super().save(*args, **kwargs)
 
 class CityCorporation(models.Model):
-    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='City Corporation Name in English without Space')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True)
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/CityCorporation/',blank=True, null=True)
     url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
@@ -215,13 +219,13 @@ class CityCorporation(models.Model):
         return super().save(*args, **kwargs)
    
 class ZipPostalCode(models.Model):
-    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Zip Postal Code Name in English without Space')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True)
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True)
     upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null=True)
     cityCorporation = models.ForeignKey(CityCorporation, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=100)
-    code = models.CharField(max_length=20)
+    name = models.CharField(max_length=50)
+    zipCode = models.CharField(max_length=20)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/ZipPostalCode/',blank=True, null=True)
     url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
@@ -252,8 +256,8 @@ class ZipPostalCode(models.Model):
         return super().save(*args, **kwargs)
         
 class NewsCategory(models.Model):
-    uniqueId = models.CharField(max_length=200, blank=False, null=False)
-    title = models.CharField(max_length=200)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Category Name in English without Space')
+    title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='News/Categories/Category/',blank=True, null=True)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     status = models.IntegerField(choices=STATUS, default = 1)
@@ -285,9 +289,9 @@ class NewsCategory(models.Model):
         return super().save(*args, **kwargs)  
   
 class NewsSubCategory(models.Model):
-    uniqueId = models.CharField(max_length=200, blank=False, null=False)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Sub Category Name in English without Space')
     categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='News/Categories/SubCategory/',blank=True, null=True)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     status = models.IntegerField(choices=STATUS, default = 1)
@@ -319,7 +323,8 @@ class NewsSubCategory(models.Model):
         return super().save(*args, **kwargs)
 
 class PostsTag(models.Model):
-    title = models.CharField(max_length=200)
+    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Tag Name in English without Space')
+    title = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Tags/',blank=True, null=True)

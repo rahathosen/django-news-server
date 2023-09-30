@@ -4,6 +4,9 @@ from django.utils.text import slugify
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
+import os
+import piexif
+from collections import defaultdict
 
 from reporter.models import Reporter
 from categories.models import NewsCategory, NewsSubCategory, Continents, Country, Division, District, Upozila, ZipPostalCode, PostsTag
@@ -19,27 +22,28 @@ YESNO = (
 
 
 class Post(models.Model):
-    categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING,default=1, blank=False, null=False)
-    subcategoryId = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING,default=1, blank=False, null=False)
-    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING,default=1, blank=False, null=False)
-    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING,default=1, blank=False, null=False)
-    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING,default=1, blank=True, null=True)
-    district = models.ForeignKey(District, on_delete=models.DO_NOTHING,default=1, blank=True, null=True)
-    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING,default=1, blank=True, null=True)
-    zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING,default=1, blank=True, null= True)
-    title = models.CharField(max_length=200,  blank=True, null=True)
-    details = RichTextField(blank=True, null=True)
-    tag = models.ManyToManyField(PostsTag, blank=True)
-    related_post = models.ManyToManyField('self', blank=True)
-    image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500)
-    videoLink = models.CharField(max_length=200,null=True,blank=True)
-    reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING,default=1, blank=False, null=False)
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True)
-    status = models.IntegerField(choices=STATUS, default = 0)
-    editor_reviewed = models.IntegerField(choices=YESNO, default = 0)
-    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
-    total_view = models.PositiveIntegerField(default=0)
+    uniqueId = models.CharField(max_length=200,  blank=True, null=True)
+    categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Category')
+    subcategoryId = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Sub Category')
+    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Continent')
+    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Country')
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING,default=1, blank=True, null=True, verbose_name='Division')
+    district = models.ForeignKey(District, on_delete=models.DO_NOTHING,default=1, blank=True, null=True, verbose_name='District')
+    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING,default=1, blank=True, null=True, verbose_name='Upozila')
+    zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING,default=1, blank=True, null= True, verbose_name='Zip Code')
+    title = models.CharField(max_length=200,  blank=True, null=True, verbose_name='Title')
+    details = RichTextField(blank=True, null=True, verbose_name='Details')
+    tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
+    related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggation')
+    image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image')
+    videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
+    reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Reporter')
+    created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
+    updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
+    status = models.IntegerField(choices=STATUS, default = 0, verbose_name='Status')
+    editor_reviewed = models.IntegerField(choices=YESNO, default = 0, verbose_name='Editor Reviewed')
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True, verbose_name='URL(will be auto generated)')
+    total_view = models.PositiveIntegerField(default=0, verbose_name='Total View(*Do not edit)')
 
     class Meta:
         ordering = ["-created_at"]
@@ -53,6 +57,10 @@ class Post(models.Model):
         # for image
         if self.image:
             img = Image.open(self.image)
+            # I will change EXIF data efor Upload 
+            exif_dict = piexif.load(img.info["exif"])
+            print(exif_dict)
+
             output = BytesIO()
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Post/images/webp', output.getvalue(), None)
@@ -60,9 +68,19 @@ class Post(models.Model):
     # for url
         if not self.url:
             slug_str = f"{self.title}"
-            self.url = self.title.replace(" ", "-").replace(",", "")
+            self.url = self.title.replace(" ", "").replace(",", "").replace("-","").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
         if self.url:
-            self.url = self.url.replace(" ", "").replace(",", "")
-        return super().save(*args, **kwargs)
+            self.url = self.title.replace(" ", "").replace(",", "").replace("-","").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
+        # return super().save(*args, **kwargs)
+    
+        if self.uniqueId == "" or self.uniqueId == None:
+            self.uniqueId = str(self.id)+self.categoryId.uniqueId+self.subcategoryId.uniqueId+self.country.uniqueId
+
+            return super().save(*args, **kwargs)
+    def update_filename(instance, filename):
+        path = "upload/path/"
+        name = instance.uniqueId
+        format = name + instance.file_extension
+        return os.path.join(path, format)
 
 
