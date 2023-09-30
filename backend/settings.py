@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # for vercel postgres
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
+#         'ENGINE': os.environ['PGENGINE'],
 #         'URL': os.environ['POSTGRES_URL'],
 #         'NAME': os.environ['POSTGRES_DATABASE'],
 #         'USER': os.environ['POSTGRES_USER'],
