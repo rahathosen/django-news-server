@@ -17,52 +17,27 @@ import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-
-"""
-# Comment out the production line to run in production mode
-# Comment out the development line to run in development mode
-# Comment out the local line to run in local mode
-"""
-# mood = 'development'
-# mood = 'production'
-# mood = 'local'
-
-# if mood == 'local':
-#     msg = "Running in local mode."
-#     print('\u001b[35m'+msg+'\u001b[0m')
-#     dotenv_file = os.path.join(BASE_DIR, ".env_local")
-# if mood == 'production':
-#     msg = "Running in PRODUCTION mode"
-#     print('\033[93m'+msg+'\033[0m')
-#     print('\u001b[35m'+msg+'\u001b[0m')
-#     dotenv_file = os.path.join(BASE_DIR, ".env_prod")
-# if mood == 'development':
-#     msg = "Running in DEVELOPMENT mode"
-#     print('\033[93m'+msg+'\033[0m')
-#     print('\u001b[35m'+msg+'\u001b[0m')
-#     dotenv_file = os.path.join(BASE_DIR, ".env")
-
-# if os.path.isfile(dotenv_file):
-#     dotenv.load_dotenv(dotenv_file)
-# else:
-#     print("WARNING: No .env file found.")
-
-# # dotenv_file = os.path.join(BASE_DIR, ".env_local")
-# if os.path.isfile(dotenv_file):
-#     dotenv.load_dotenv(dotenv_file)
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 
 
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-5r#xglib)6ji)aztao)nc^_z6yb22!=)7vflxlmlls%au!0(7v'
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
 ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
 
+
 # Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -118,21 +93,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.app'
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-# for vercel postgres
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.environ['PGENGINE'],
-#         'URL': os.environ['POSTGRES_URL'],
-#         'NAME': os.environ['POSTGRES_DATABASE'],
-#         'USER': os.environ['POSTGRES_USER'],
-#         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-#         'HOST': os.environ['POSTGRES_HOST'],
-       
-#     }
-# }
-
 
 # for railway
 DATABASES = {
