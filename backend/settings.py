@@ -28,31 +28,34 @@ DEBUG = True
 """
 # mood = 'development'
 # mood = 'production'
-mood = 'local'
+# mood = 'local'
 
-if mood == 'local':
-    msg = "Running in local mode."
-    print('\u001b[35m'+msg+'\u001b[0m')
-    dotenv_file = os.path.join(BASE_DIR, ".env_local")
-if mood == 'production':
-    msg = "Running in PRODUCTION mode"
-    print('\033[93m'+msg+'\033[0m')
-    print('\u001b[35m'+msg+'\u001b[0m')
-    dotenv_file = os.path.join(BASE_DIR, ".env_prod")
-if mood == 'development':
-    msg = "Running in DEVELOPMENT mode"
-    print('\033[93m'+msg+'\033[0m')
-    print('\u001b[35m'+msg+'\u001b[0m')
-    dotenv_file = os.path.join(BASE_DIR, ".env")
+# if mood == 'local':
+#     msg = "Running in local mode."
+#     print('\u001b[35m'+msg+'\u001b[0m')
+#     dotenv_file = os.path.join(BASE_DIR, ".env_local")
+# if mood == 'production':
+#     msg = "Running in PRODUCTION mode"
+#     print('\033[93m'+msg+'\033[0m')
+#     print('\u001b[35m'+msg+'\u001b[0m')
+#     dotenv_file = os.path.join(BASE_DIR, ".env_prod")
+# if mood == 'development':
+#     msg = "Running in DEVELOPMENT mode"
+#     print('\033[93m'+msg+'\033[0m')
+#     print('\u001b[35m'+msg+'\u001b[0m')
+#     dotenv_file = os.path.join(BASE_DIR, ".env")
 
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
-else:
-    print("WARNING: No .env file found.")
+# if os.path.isfile(dotenv_file):
+#     dotenv.load_dotenv(dotenv_file)
+# else:
+#     print("WARNING: No .env file found.")
 
-# dotenv_file = os.path.join(BASE_DIR, ".env_local")
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
+# # dotenv_file = os.path.join(BASE_DIR, ".env_local")
+# if os.path.isfile(dotenv_file):
+#     dotenv.load_dotenv(dotenv_file)
+
+
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-5r#xglib)6ji)aztao)nc^_z6yb22!=)7vflxlmlls%au!0(7v'
