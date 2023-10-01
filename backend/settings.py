@@ -98,12 +98,12 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 DATABASES = {
     'default': {
         'ENGINE': os.environ['PGENGINE'],
-        'URL': os.environ['DATABASE_URL'],
+        'URL': os.environ['TEMP_DATABASE_URL'],
         'NAME': os.environ['PGDATABASE'],
         'USER': os.environ['PGUSER'],
-        'PASSWORD': os.environ['PGPASSWORD'],
-        'HOST': os.environ['PGHOST'],
-        'PORT': os.environ['PGPORT'],
+        'PASSWORD': os.environ['TEMP_PGPASSWORD'],
+        'HOST': os.environ['TEMP_PGHOST'],
+        'PORT': os.environ['TEMP_PGPORT'],
        
     }
 }
