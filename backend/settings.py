@@ -95,19 +95,6 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# for vercel postgres
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.environ['PGENGINE'],
-#         'URL': os.environ['POSTGRES_URL'],
-#         'NAME': os.environ['POSTGRES_DATABASE'],
-#         'USER': os.environ['POSTGRES_USER'],
-#         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-#         'HOST': os.environ['POSTGRES_HOST'],
-       
-#     }
-# }
-
 
 # for railway
 DATABASES = {
