@@ -15,7 +15,7 @@ from .sitemap import sitemapUrl
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('news/', include('news.urls')),
-    path('gql/', csrf_exempt(GraphQLView.as_view(graphiql=True)))   
+    path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True)))   
 ]
 urlpatterns += sitemapUrl
 urlpatterns += staticfiles_urlpatterns()

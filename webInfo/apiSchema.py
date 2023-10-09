@@ -2,7 +2,7 @@ import graphene
 from graphene_django import DjangoObjectType
 
 from webInfo.models import *
-s
+
 class WebsiteInfoType(DjangoObjectType):
     class Meta:
         model = WebsiteInfo

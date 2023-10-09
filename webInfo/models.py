@@ -11,6 +11,7 @@ from news.models import Post
 from categories.models import *
 from article.models import ArticleCategory, ArticleWritter, Article 
 from feature.models import Feature, FeatureCategory, FeaturePost
+
 STATUS = (
     (0,"Draft"),
     (1,"Publish")
