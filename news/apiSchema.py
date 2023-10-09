@@ -11,50 +11,56 @@ class PostType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    post = graphene.Field(PostType, id=graphene.Int())
+    post = graphene.Field(PostType, id=graphene.Int(), uniqueId = graphene.String())
    
     today_posts = graphene.List(PostType)
     last_week_popular_post  = graphene.List(PostType)
     last_month_popular_post = graphene.List(PostType)
 
-    post_by_category = graphene.List(PostType, category_id=graphene.Int())
-    post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int())
-    post_by_country = graphene.List(PostType, country_id=graphene.Int())
-    post_by_division = graphene.List(PostType, division_id=graphene.Int())
-    post_by_district = graphene.List(PostType, district_id=graphene.Int())
-    post_by_cityCorporation = graphene.List(PostType, cityCorporation_id=graphene.Int())
-    post_by_upozila = graphene.List(PostType, upozila_id=graphene.Int())
-    post_by_zip_postal_code = graphene.List(PostType, zip_postal_code_id=graphene.Int())
-    post_by_tag = graphene.List(PostType, tag_id=graphene.Int())
-    post_by_reporter = graphene.List(PostType, author_id=graphene.Int())
+    post_by_category = graphene.List(PostType, category_id=graphene.Int(), category_uniqueId = graphene.String())
+    post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int(), sub_category_uniqueId = graphene.String())
+    post_by_country = graphene.List(PostType, country_id=graphene.Int(), country_uniqueId = graphene.String())
+    post_by_division = graphene.List(PostType, division_id=graphene.Int(), division_uniqueId = graphene.String())
+    post_by_district = graphene.List(PostType, district_id=graphene.Int(), district_uniqueId = graphene.String())
+    post_by_cityCorporation = graphene.List(PostType, cityCorporation_id=graphene.Int(), cityCorporation_uniqueId = graphene.String())
+    post_by_upozila = graphene.List(PostType, upozila_id=graphene.Int(), upozila_uniqueId = graphene.String())
+    post_by_Thana = graphene.List(PostType, thana_id=graphene.Int(), thana_uniqueId = graphene.String())
+    post_by_pourosava = graphene.List(PostType, pourosava_id=graphene.Int(), pourosava_uniqueId = graphene.String())
+    post_by_union = graphene.List(PostType, union_id=graphene.Int(), union_uniqueId = graphene.String())
+    post_by_tourist_spot = graphene.List(PostType, tourist_spot_id=graphene.Int(), tourist_spot_uniqueId = graphene.String())
+    post_by_zip_postal_code = graphene.List(PostType, zip_postal_code_id=graphene.Int(), zip_postal_code_uniqueId = graphene.String())
+    post_by_tag = graphene.List(PostType, tag_id=graphene.Int(), tag_uniqueId = graphene.String())
+    post_by_reporter = graphene.List(PostType, author_id=graphene.Int(), author_uniqueId = graphene.String())
 
-    last_8_post_by_category = graphene.List(PostType, category_id=graphene.Int())
-    last_8_post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int())
+    last_8_post_by_category = graphene.List(PostType, category_id=graphene.Int(), category_uniqueId = graphene.String())
+    last_8_post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int(), sub_category_uniqueId = graphene.String())
 
-    top_8_post_by_category_this_week = graphene.List(PostType, category_id=graphene.Int())
-    top_8_post_by_sub_category_this_week = graphene.List(PostType, sub_category_id=graphene.Int())
+    top_8_post_by_category_this_week = graphene.List(PostType, category_id=graphene.Int(), category_uniqueId = graphene.String())
+    top_8_post_by_sub_category_this_week = graphene.List(PostType, sub_category_id=graphene.Int(), sub_category_uniqueId = graphene.String())
 
-    filter_post = graphene.List(PostType, category_id=graphene.Int(), sub_category_id=graphene.Int(), country_id=graphene.Int(), division_id=graphene.Int(), district_id=graphene.Int(), cityCorporation_id=graphene.Int(), upozila_id=graphene.Int(), zip_postal_code_id=graphene.Int(), tag_id=graphene.Int(), author_id=graphene.Int())
+    filter_post = graphene.List(PostType, category_id=graphene.Int(),
+                                sub_category_id=graphene.Int(), country_id=graphene.Int(), 
+                                division_id=graphene.Int(), district_id=graphene.Int(), 
+                                cityCorporation_id=graphene.Int(), upozila_id=graphene.Int(), 
+                                zip_postal_code_id=graphene.Int(), tag_id=graphene.Int(), 
+                                author_id=graphene.Int())
 
     
     def resolve_post(self, info, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uniqueId')
 
         if id is not None:
             obj = Post.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
+        if uniqueId is not None:
+            obj = Post.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         return None
-    
-    def resolve_posts(self, info, first=None, skip=None, **kwargs):
-        posts = Post.objects.all()
-        if skip:
-            posts = posts[skip:]
-        if first:
-            posts = posts[:first]
-
-        return posts
     
     def resolve_today_posts(self, info, **kwargs):
         return Post.objects.filter(created_at__date=datetime.date.today()).order_by(total_view='DESC')
@@ -66,8 +72,18 @@ class Query(graphene.ObjectType):
         return Post.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30)).order_by(total_view='DESC')
     
 
-    def resolve_post_by_category(self, info, category_id, **kwargs):
-        return Post.objects.filter(category_id=category_id).ordered_by(created_at="-created_at")
+    def resolve_post_by_category(self, info, category_id, category_uniqueId, **kwargs):
+        if category_id is not None:
+            obj = Post.objects.get(category_id=category_id).ordered_by(created_at="-created_at")
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if category_uniqueId is not None:
+            obj = Post.objects.get(category_uniqueId=category_uniqueId).ordered_by(created_at="-created_at")
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        return obj
     
     def resolve_post_by_sub_category(self, info, sub_category_id, **kwargs):
         return Post.objects.filter(sub_category_id=sub_category_id).ordered_by(created_at="-created_at")

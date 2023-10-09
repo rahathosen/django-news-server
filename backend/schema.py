@@ -1,6 +1,7 @@
 import graphene
 import webInfo.apiSchema
 import news.apiSchema
+import feature.apiSchema
 
     
 class Query(
@@ -8,6 +9,7 @@ class Query(
     # Add your Query objects here
     webInfo.apiSchema.Query,
     news.apiSchema.Query,
+    feature.apiSchema.Query,
     graphene.ObjectType
 ):
     pass

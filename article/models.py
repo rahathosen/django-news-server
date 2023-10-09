@@ -20,7 +20,7 @@ YESNO = (
 
 # Article section
 class ArticleCategory(models.Model):
-    # language = models.ForeignKey(Language, on_delete=models.DO_NOTHING, blank=False, null=False, default= 1)
+    uniqueId = models.CharField(max_length=20,  blank=False, null=False, verbose_name='Category name in English without Space and comma')
     name = models.CharField(max_length=200,  blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Category/',max_length=500)
@@ -37,18 +37,19 @@ class ArticleCategory(models.Model):
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'Article/Category/', output.getvalue(), None)
         super(ArticleCategory, self).save(*args, **kwargs)
-      # for url
+        # for url
         if not self.url:
-            slug_str = f"{self.title}"
-            self.url = self.title.replace(" ", "-").replace(",", "")
+            self.url = self.uniqueId
         if self.url:
             self.url = self.url.replace(" ", "").replace(",", "")
         return super().save(*args, **kwargs)
 
 class ArticleWritter(models.Model):
+    uniqueId = models.CharField(max_length=20, blank=False, null=False, verbose_name='Writter name in English without Space and comma')
     name = models.CharField(max_length=200,  blank=True, null=True)
     Image = models.ImageField(blank=True, null=True, upload_to='Article/Writer/',max_length=500)
     details = RichTextField(blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     total_view = models.PositiveIntegerField(default=0)
 
@@ -59,10 +60,9 @@ class ArticleWritter(models.Model):
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.Image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.Image.name.split('.')[0], 'Article/Writer/', output.getvalue(), None)
         super(ArticleWritter, self).save(*args, **kwargs)
-            # for url
+        # for url
         if not self.url:
-            slug_str = f"{self.title}"
-            self.url = self.title.replace(" ", "-").replace(",", "")
+            self.url = self.uniqueId
         if self.url:
             self.url = self.url.replace(" ", "").replace(",", "")
         return super().save(*args, **kwargs)
@@ -71,14 +71,14 @@ class ArticleWritter(models.Model):
         return self.name
 
 class Article(models.Model):
-    # language = models.ForeignKey(Language, on_delete=models.DO_NOTHING, blank=False, null=False, default= 1)
+    uniqueId = models.CharField(max_length=20,  blank=True, null=True)
     title = models.CharField(max_length=200,  blank=True, null=True)
-    category = models.ForeignKey(ArticleCategory, on_delete=models.DO_NOTHING, default=1, blank=False, null=False)
-    writter = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, default=1, blank=False, null=False)
+    category = models.ForeignKey(ArticleCategory, on_delete=models.DO_NOTHING, blank=False, null=False)
+    writter = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, blank=False, null=False)
     tag = models.ManyToManyField(PostsTag, blank=False)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Images',max_length=500)
-    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=200, null=True, blank=True)
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False)
     status = models.IntegerField(choices=STATUS, default = 0)
     editor_reviewed = models.IntegerField(choices=YESNO, default = 0)
@@ -93,10 +93,13 @@ class Article(models.Model):
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'Article/images/webp', output.getvalue(), None)
         super(Article, self).save(*args, **kwargs)
-    # for url
+        
+        if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId == None:
+            self.uniqueId = str(self.id)+self.category.uniqueId+self.writter.uniqueId
+            return super().save(*args, **kwargs)
+        # for url
         if not self.url:
-            slug_str = f"{self.title}"
-            self.url = self.title.replace(" ", "-").replace(",", "")
+            self.url = self.uniqueId + self.category.uniqueId + self.writter.uniqueId
         if self.url:
             self.url = self.url.replace(" ", "").replace(",", "")
         return super().save(*args, **kwargs)

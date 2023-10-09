@@ -9,7 +9,7 @@ import piexif
 from collections import defaultdict
 
 from reporter.models import Reporter
-from categories.models import NewsCategory, NewsSubCategory, Continents, Country, Division, District, Upozila, ZipPostalCode, PostsTag
+from categories.models import *
 
 STATUS = (
     (0,"Draft"),
@@ -22,22 +22,27 @@ YESNO = (
 
 
 class Post(models.Model):
-    uniqueId = models.CharField(max_length=200,  blank=True, null=True)
-    categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Category')
-    subcategoryId = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Sub Category')
-    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Continent')
-    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Country')
-    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING,default=1, blank=True, null=True, verbose_name='Division')
-    district = models.ForeignKey(District, on_delete=models.DO_NOTHING,default=1, blank=True, null=True, verbose_name='District')
-    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING,default=1, blank=True, null=True, verbose_name='Upozila')
-    zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING,default=1, blank=True, null= True, verbose_name='Zip Code')
+    uniqueId = models.CharField(max_length=100,  blank=True, null=True)
+    categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Category')
+    subcategoryId = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Sub Category')
     title = models.CharField(max_length=200,  blank=True, null=True, verbose_name='Title')
     details = RichTextField(blank=True, null=True, verbose_name='Details')
-    tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggation')
+    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
+    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Country')
+    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Division')
+    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='District')
+    city_corporation = models.ForeignKey(CityCorporation, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='City Corporation')
+    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Upozila')
+    pourosava = models.ForeignKey(Pourosava, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Pourosava')
+    thana = models.ForeignKey(Thana, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Thana')
+    union = models.ForeignKey(Union, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Union')
+    zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING, blank=True, null= True, verbose_name='Zip Code')
+    turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
+    tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image')
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
-    reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING,default=1, blank=False, null=False, verbose_name='Reporter')
+    reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
     status = models.IntegerField(choices=STATUS, default = 0, verbose_name='Status')
@@ -57,30 +62,26 @@ class Post(models.Model):
         # for image
         if self.image:
             img = Image.open(self.image)
-            # I will change EXIF data efor Upload 
-            exif_dict = piexif.load(img.info["exif"])
-            print(exif_dict)
-
             output = BytesIO()
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Post/images/webp', output.getvalue(), None)
         super(Post, self).save(*args, **kwargs)
+    
+        if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId == None:
+            self.uniqueId = str(self.id)+self.categoryId.uniqueId+self.subcategoryId.uniqueId+self.country.uniqueId
+            return super().save(*args, **kwargs)
     # for url
         if not self.url:
-            slug_str = f"{self.title}"
-            self.url = self.title.replace(" ", "").replace(",", "").replace("-","").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
-        if self.url:
-            self.url = self.title.replace(" ", "").replace(",", "").replace("-","").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
-        # return super().save(*args, **kwargs)
-    
-        if self.uniqueId == "" or self.uniqueId == None:
-            self.uniqueId = str(self.id)+self.categoryId.uniqueId+self.subcategoryId.uniqueId+self.country.uniqueId
-
+            self.url = self.uniqueId.replace(" ", "").replace(",", "").replace("-","").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
             return super().save(*args, **kwargs)
-    def update_filename(instance, filename):
-        path = "upload/path/"
-        name = instance.uniqueId
-        format = name + instance.file_extension
-        return os.path.join(path, format)
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "").replace("-","").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
+            return super().save(*args, **kwargs)
+        
+    # def update_filename(instance, filename):
+    #     path = "upload/path/"
+    #     name = instance.uniqueId
+    #     format = name + instance.file_extension
+    #     return os.path.join(path, format)
 
 

@@ -17,10 +17,41 @@ import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# mood = 'local'
+mood = 'staging'
+# mood = 'production'
 
-dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
+
+if mood == 'production':
+    msg = "Running in PRODUCTION mode"
+    print('\033[93m'+msg+'\033[0m')
+    print('\u001b[35m'+msg+'\u001b[0m')
+    dotenv_file = os.path.join(BASE_DIR, ".env")
+    if os.path.isfile(dotenv_file):
+        dotenv.load_dotenv(dotenv_file)
+    else:
+        print("WARNING: No .env_dev file found.")
+
+elif mood == 'staging':
+    msg = "Running in DEVELOPMENT mode (staging)."
+    print('\033[93m'+msg+'\033[0m')
+    print('\u001b[35m'+msg+'\u001b[0m')
+    dotenv_file = os.path.join(BASE_DIR, ".env_dev")
+    if os.path.isfile(dotenv_file):
+        dotenv.load_dotenv(dotenv_file)
+    else:
+        print("WARNING: No .env file found.")
+
+elif mood == 'local':
+    msg = "Running in local mode."
+    print('\u001b[35m'+msg+'\u001b[0m')
+    dotenv_file = os.path.join(BASE_DIR, ".env_local")
+    if os.path.isfile(dotenv_file):
+        dotenv.load_dotenv(dotenv_file)
+    else:
+        print("WARNING: No .env_local file found.")
+
+
 
 
 
@@ -31,9 +62,15 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = 'django-insecure-5r#xglib)6ji)aztao)nc^_z6yb22!=)7vflxlmlls%au!0(7v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if mood == 'production':
+    DEBUG = True
+else:
+    DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+if mood == 'production':
+    ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '*']
 
 
 # Application definition
@@ -48,7 +85,6 @@ INSTALLED_APPS = [
     # Third party apps
     'graphene_django',
     'ckeditor',
-    'pyuca',
 
     # Created apps
     'advertisement',
@@ -58,9 +94,10 @@ INSTALLED_APPS = [
     'news',
     'reporter',
     'webInfo',
+    'feature',
 
 ]
-if DEBUG:
+if mood == 'stging' or mood == 'local':
     INSTALLED_APPS += [
     'search',
     ]
@@ -101,16 +138,16 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-# for railway
+# for Database
 DATABASES = {
     'default': {
         'ENGINE': os.environ['PGENGINE'],
         'URL': os.environ['DATABASE_URL'],
         'NAME': os.environ['PGDATABASE'],
         'USER': os.environ['PGUSER'],
-        'PASSWORD': os.environ['TEMP_PGPASSWORD'],
-        'HOST': os.environ['TEMP_PGHOST'],
-        'PORT': os.environ['TEMP_PGPORT'],
+        'PASSWORD': os.environ['PGPASSWORD'],
+        'HOST': os.environ['PGHOST'],
+        'PORT': os.environ['PGPORT'],
        
     }
 }
