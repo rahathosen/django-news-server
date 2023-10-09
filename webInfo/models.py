@@ -8,8 +8,9 @@ from django.core.exceptions import ValidationError
 
 from reporter.models import Reporter
 from news.models import Post
-from categories.models import NewsCategory, NewsSubCategory, Continents, Country, Division, District, Upozila, ZipPostalCode, CityCorporation, PostsTag
-
+from categories.models import *
+from article.models import ArticleCategory, ArticleWritter, Article 
+from feature.models import Feature, FeatureCategory, FeaturePost
 STATUS = (
     (0,"Draft"),
     (1,"Publish")
@@ -65,6 +66,20 @@ class WebsiteInfo(models.Model):
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.newsThumbnail = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'website_info/newsThumbnail', output.getvalue(), None)
         super(WebsiteInfo, self).save(*args, **kwargs)
+
+class Navigation(models.Model):
+    in_news = models.ManyToManyField(Continents, blank=True, verbose_name='In Nav News')
+    in_news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
+    in_news3 = models.ManyToManyField(Division, blank=True, verbose_name='In Nav News')
+    in_news4 = models.ManyToManyField(District, blank=True, verbose_name='In Nav News')
+    in_news5 = models.ManyToManyField(CityCorporation, blank=True, verbose_name='In Nav News')
+    in_news6 = models.ManyToManyField(TurisumSpot, blank=True, verbose_name='In Nav News')
+    in_categories = models.ManyToManyField(NewsCategory, blank=True, verbose_name='In Nav Categories', limit_choices_to= 8)
+    feature = models.ManyToManyField(Feature, blank=True, verbose_name='In News feature')
+
+    class Meta:
+        verbose_name_plural = 'Navigation Bar'
+        verbose_name = 'Navigation Bar'  
 
 class HeadLine(models.Model):
     items = models.ManyToManyField(Post, blank=True , limit_choices_to = 10, verbose_name='Headlines')
