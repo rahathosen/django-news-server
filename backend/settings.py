@@ -98,12 +98,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.app'
 
 # Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
 
 # for railway
 DATABASES = {
     'default': {
         'ENGINE': os.environ['PGENGINE'],
-        'URL': os.environ['TEMP_DATABASE_URL'],
+        'URL': os.environ['DATABASE_URL'],
         'NAME': os.environ['PGDATABASE'],
         'USER': os.environ['PGUSER'],
         'PASSWORD': os.environ['TEMP_PGPASSWORD'],

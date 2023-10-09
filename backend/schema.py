@@ -1,13 +1,12 @@
 import graphene
 import webInfo.apiSchema
-
 import news.apiSchema
 
     
 class Query(
 
     # Add your Query objects here
-     webInfo.apiSchema.Query,
+    webInfo.apiSchema.Query,
     news.apiSchema.Query,
     graphene.ObjectType
 ):
