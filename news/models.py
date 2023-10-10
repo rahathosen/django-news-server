@@ -5,7 +5,6 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from cloudinary.models import CloudinaryField
 
 from reporter.models import Reporter
 from categories.models import *
@@ -40,7 +39,7 @@ class Post(models.Model):
     turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
     tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image')
-    # image0 =  CloudinaryField('image', blank=True, null=True)
+    
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
