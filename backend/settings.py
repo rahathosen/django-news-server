@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import dotenv
+from google.oauth2 import service_account
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,6 +37,8 @@ INSTALLED_APPS = [
     # Third party apps
     'graphene_django',
     'ckeditor',
+    'storages',
+    'gdstorage',
 
     # Created apps
     'advertisement',
@@ -50,7 +53,8 @@ INSTALLED_APPS = [
 ]
 if DEBUG:
     INSTALLED_APPS += [
-    'search',]
+    'search',
+    ]
 
 
 MIDDLEWARE = [
@@ -134,16 +138,32 @@ USE_I18N = True
 
 USE_TZ = True
 
+# # Use the Google Cloud Storage backend for media files
+# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+
+# # Google Cloud Storage settings
+# GS_BUCKET_NAME = 'your-bucket-name'
+# GS_PROJECT_ID = 'your-project-id'
+# GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+#     os.path.join(BASE_DIR, 'path-to-your-credentials.json')
+# )
+
+# Google Drive Storage Settings
+GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE =  os.path.join(BASE_DIR, 'techsand-4bc1e407883a.json')
+GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = '<base google drive path for file uploads>' # OPTIONAL
+
+
+
 # Path where media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 # Base url to serve media files
-STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -5,6 +5,9 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
+from gdstorage.storage import GoogleDriveStorage
+# Define Google Drive Storage
+gd_storage = GoogleDriveStorage()
 
 from reporter.models import Reporter
 from categories.models import *
@@ -38,7 +41,7 @@ class Post(models.Model):
     zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING, blank=True, null= True, verbose_name='Zip Code')
     turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
     tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
-    image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image')
+    image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image', storage=gd_storage)
     
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
