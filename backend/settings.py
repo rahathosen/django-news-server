@@ -14,46 +14,14 @@ from pathlib import Path
 import os
 import dotenv
 import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# mood = 'local'
-mood = 'staging'
-# mood = 'production'
 
-
-if mood == 'production':
-    msg = "Running in PRODUCTION mode"
-    print('\033[93m'+msg+'\033[0m')
-    print('\u001b[35m'+msg+'\u001b[0m')
-    dotenv_file = os.path.join(BASE_DIR, ".env")
-    if os.path.isfile(dotenv_file):
-        dotenv.load_dotenv(dotenv_file)
-    else:
-        print("WARNING: No .env_dev file found.")
-
-elif mood == 'staging':
-    msg = "Running in DEVELOPMENT mode (staging)."
-    print('\033[93m'+msg+'\033[0m')
-    print('\u001b[35m'+msg+'\u001b[0m')
-    dotenv_file = os.path.join(BASE_DIR, ".env_dev")
-    if os.path.isfile(dotenv_file):
-        dotenv.load_dotenv(dotenv_file)
-    else:
-        print("WARNING: No .env file found.")
-
-elif mood == 'local':
-    msg = "Running in local mode."
-    print('\u001b[35m'+msg+'\u001b[0m')
-    dotenv_file = os.path.join(BASE_DIR, ".env_local")
-    if os.path.isfile(dotenv_file):
-        dotenv.load_dotenv(dotenv_file)
-    else:
-        print("WARNING: No .env_local file found.")
-
-
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 
 
@@ -64,15 +32,9 @@ elif mood == 'local':
 SECRET_KEY = 'django-insecure-5r#xglib)6ji)aztao)nc^_z6yb22!=)7vflxlmlls%au!0(7v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if mood == 'production':
-    DEBUG = True
-else:
-    DEBUG = True
+DEBUG = True
 
-if mood == 'production':
-    ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
-else:
-    ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '*']
+ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
 
 
 # Application definition
@@ -94,16 +56,12 @@ INSTALLED_APPS = [
     'categories',
     'homepage',
     'news',
+    'search',
     'reporter',
     'webInfo',
     'feature',
 
 ]
-if mood == 'stging' or mood == 'local':
-    INSTALLED_APPS += [
-    'search',
-    ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,7 +98,7 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-# for Database
+# for railway
 DATABASES = {
     'default': {
         'ENGINE': os.environ['PGENGINE'],
@@ -167,23 +125,21 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-if DEBUG:
-    AUTH_PASSWORD_VALIDATORS = []
-else:
-    AUTH_PASSWORD_VALIDATORS = [
-        {
-            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-        },
-        {
-            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        },
-        {
-            'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-        },
-        {
-            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-        },
-    ]
+
+AUTH_PASSWORD_VALIDATORS = [
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
+]
 
 
 # Internationalization
@@ -191,7 +147,7 @@ else:
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Dhaka'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
