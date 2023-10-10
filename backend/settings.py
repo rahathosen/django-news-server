@@ -20,8 +20,8 @@ import cloudinary.api
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # mood = 'local'
-mood = 'staging'
-# mood = 'production'
+# mood = 'staging'
+mood = 'production'
 
 
 if mood == 'production':
@@ -70,7 +70,7 @@ else:
     DEBUG = True
 
 if mood == 'production':
-    ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(',')
+    ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '*']
 else:
     ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '*']
 
