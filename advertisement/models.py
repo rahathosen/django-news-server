@@ -5,7 +5,15 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from webInfo.models import STATUS, YESNO 
+# from webInfo.models import STATUS, YESNO 
+STATUS = (
+    (0,"Draft"),
+    (1,"Publish")
+)
+YESNO = (
+    (0,"No"),
+    (1,"Yes")
+)
 
 #Advertisement section
 class AdBox(models.Model):
