@@ -455,3 +455,4 @@ class PostsTag(models.Model):
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Tags/', output.getvalue(), None)
         super(PostsTag, self).save(*args, **kwargs)
 
+

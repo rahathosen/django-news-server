@@ -69,21 +69,26 @@ class WebsiteInfo(models.Model):
         super(WebsiteInfo, self).save(*args, **kwargs)
 
 class Navigation(models.Model):
-    in_news = models.ManyToManyField(Continents, blank=True, verbose_name='In Nav News')
-    in_news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
-    in_news3 = models.ManyToManyField(Division, blank=True, verbose_name='In Nav News')
-    in_news4 = models.ManyToManyField(District, blank=True, verbose_name='In Nav News')
-    in_news5 = models.ManyToManyField(CityCorporation, blank=True, verbose_name='In Nav News')
-    in_news6 = models.ManyToManyField(TurisumSpot, blank=True, verbose_name='In Nav News')
-    in_categories = models.ManyToManyField(NewsCategory, blank=True, verbose_name='In Nav Categories', limit_choices_to= 8)
+    news = models.ManyToManyField(Continents, blank=True, verbose_name='In Nav News')
+    news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
+    news3 = models.ManyToManyField(Division, blank=True, verbose_name='In Nav News')
+    news4 = models.ManyToManyField(District, blank=True, verbose_name='In Nav News')
+    news5 = models.ManyToManyField(CityCorporation, blank=True, verbose_name='In Nav News')
+    news6 = models.ManyToManyField(TurisumSpot, blank=True, verbose_name='In Nav News')
+    categories = models.ManyToManyField(NewsCategory, blank=False, verbose_name='In Nav Categories(Do not select 8 more)')
     feature = models.ManyToManyField(Feature, blank=True, verbose_name='In News feature')
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        ordering = ["-updated_at"]
         verbose_name_plural = 'Navigation Bar'
-        verbose_name = 'Navigation Bar'  
+        verbose_name = 'Navigation Bar'
+
+    def __str__(self):
+        return f"'Last updated' + ' - ' + {self.updated_at}"
 
 class HeadLine(models.Model):
-    items = models.ManyToManyField(Post, blank=True , limit_choices_to = 10, verbose_name='Headlines')
+    headlines = models.ManyToManyField(Post, blank=True , verbose_name='Headlines')
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -92,10 +97,10 @@ class HeadLine(models.Model):
         verbose_name = 'Headline / শিরোনাম'
 
     def __str__(self):
-        return 'Last updated' + ' - ' + self.updated_at
+        return f"'Last updated' + ' - ' + {self.updated_at}"
     
 class BreakingNews(models.Model):
-    items = models.ManyToManyField(Post, blank=True, limit_choices_to = 5, verbose_name='Breaking News')
+    items = models.ManyToManyField(Post, blank=True, verbose_name='Breaking News')
     updated_at = models.DateTimeField(auto_now=True)
     end_at = models.DateTimeField(blank=False)
 
@@ -105,7 +110,7 @@ class BreakingNews(models.Model):
         verbose_name = 'Breaking News'
 
     def __str__(self):
-        return 'Last updated' + ' - ' + self.updated_at
+        return f"'Last updated' + ' - ' + {self.updated_at}"
     
 class Cover(models.Model):
     headNews = models.ForeignKey(Post, on_delete=models.DO_NOTHING, blank=False, verbose_name='Head Line News')
@@ -119,16 +124,16 @@ class Cover(models.Model):
         
 
     def __str__(self):
-        return self.headNews.title + ' - ' + self.updated_at
+        return f"'Last updated' + ' - ' + {self.updated_at}"
 
     
 class SectionBox(models.Model):
-    background_color = models.CharField(max_length=10,blank=True, verbose_name='Background Color(Must be in Hexadecimal)')
+    background_color = models.CharField(max_length=10, blank=True, verbose_name='Background Color(Must be in Hexadecimal)')
     image = models.ImageField(upload_to='sectionBox/images/webp',blank=True, null=True)
-    title = models.CharField(max_length=50,blank=False)
+    title = models.CharField(max_length=50, blank=False)
     details = models.TextField(blank=True, null=True)
     heighlighted = models.ForeignKey(Post, on_delete=models.DO_NOTHING, blank=False, verbose_name='Heighlighted News')
-    items = models.ManyToManyField(NewsCategory, blank=True, limit_choices_to= 1)
+    items = models.ManyToManyField(NewsCategory, blank=True)
     items2 = models.ManyToManyField(NewsSubCategory, blank=True)
     items3 = models.ManyToManyField(PostsTag, blank=True)
     items4 = models.ManyToManyField(Continents, blank=True)
@@ -145,7 +150,7 @@ class SectionBox(models.Model):
         verbose_name = 'Section Box'
 
     def __str__(self):
-        return self.title + ' - ' + self.updated_at
+        return f"{self.title + '-' + str(self.updated_at)}"
     
     def save(self, *args, **kwargs):
         if self.image:
@@ -169,9 +174,9 @@ class Poll(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.question
+        return f"{self.question}"
 
     def save(self, *args, **kwargs):
         self.total_view = self.total_view + 1
         super().save(*args, **kwargs)
-        
+    

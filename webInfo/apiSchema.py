@@ -2,6 +2,10 @@ import graphene
 from graphene_django import DjangoObjectType
 
 from webInfo.models import *
+from news.models import *
+from categories.models import *
+from article.models import *
+from feature.models import *
 
 class WebsiteInfoType(DjangoObjectType):
     class Meta:
@@ -68,8 +72,7 @@ class UpdatePoll(graphene.Mutation):
 class Query(graphene.ObjectType):
     websiteInfo = graphene.Field(WebsiteInfoType)
 
-    navigation = graphene.Field(NavigationType, id=graphene.Int())
-    all_navigation = graphene.List(NavigationType)
+    navigation = graphene.Field(NavigationType)
 
     headLine = graphene.Field(HeadLineType, id=graphene.Int())
     all_headLine = graphene.List(HeadLineType)
@@ -101,18 +104,12 @@ class Query(graphene.ObjectType):
             return None
 
     def resolve_navigation(self, info, **kwargs):
-        id = kwargs.get('id')
+        
         if id is not None:
-            obj = Navigation.objects.get(pk=id)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
+            
+            return Navigation.objects.last()
         else:
             return None
-
-    def resolve_all_navigation(self, info, **kwargs):
-        return Navigation.objects.all()
-    
         
     def resolve_all_headLine(self, info, **kwargs):
         return HeadLine.objects.all()
