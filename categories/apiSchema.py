@@ -2,6 +2,9 @@ import graphene
 from graphene_django import DjangoObjectType
 
 from categories.models import *
+from news.models import *
+from reporter.models import *
+from news.apiSchema import *
 
 class NewsCategoryType(DjangoObjectType):
     class Meta:

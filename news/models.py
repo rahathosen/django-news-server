@@ -23,8 +23,8 @@ OWN_WATERMARK_TEXT = "Your Watermark Text"
 
 class Post(models.Model):
     uniqueId = models.CharField(max_length=100, blank=True, null=True)
-    categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Category')
-    subcategoryId = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Sub Category')
+    category = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Category')
+    subcategory = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Sub Category')
     title = models.CharField(max_length=200, blank=True, null=True, verbose_name='Title')
     details = RichTextField(blank=True, null=True, verbose_name='Details')
     related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggestion')
@@ -86,31 +86,35 @@ class Post(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.image:
-            img = Image.open(self.image)
-            # Create an InMemoryUploadedFile 
-            img = img.convert('RGB')
-            img_data = BytesIO()
-            img.save(img_data, format='webp')
-            img_data.seek(0)
-            img_bytes = img_data.read()
+        if self.image.url == "":
 
-            # Remove Exif data
-            # img_bytes = self.remove_exif(img_bytes)
+        
+            if self.image:
+                img = Image.open(self.image)
+                # Create an InMemoryUploadedFile 
+                img = img.convert('RGB')
+                img_data = BytesIO()
+                img.save(img_data, format='webp')
+                img_data.seek(0)
+                img_bytes = img_data.read()
 
-            # Add a watermark
-            watermark_text = OWN_WATERMARK_TEXT
-            watermark_path = OWN_WATERMARK_PATH  # Change to the actual path of your watermark image
-            img = Image.open(BytesIO(img_bytes))
-            # img = self.add_watermark(img, watermark_path, watermark_text)
-            # Create an InMemoryUploadedFile and save it to self._image
-            self.image = InMemoryUploadedFile(BytesIO(img_bytes), None, f"{self.image.name.split('.')[0]}.webp", 'image/webp', len(img_bytes), None)
-            self.imageurl = self.image.url
+                # Remove Exif data
+                # img_bytes = self.remove_exif(img_bytes)
 
-        super(Post, self).save(*args, **kwargs)
+                # Add a watermark
+                watermark_text = OWN_WATERMARK_TEXT
+                watermark_path = OWN_WATERMARK_PATH  # Change to the actual path of your watermark image
+                img = Image.open(BytesIO(img_bytes))
+                # img = self.add_watermark(img, watermark_path, watermark_text)
+                # Create an InMemoryUploadedFile and save it to self._image
+                self.image = InMemoryUploadedFile(BytesIO(img_bytes), None, f"{self.image.name.split('.')[0]}.webp", 'image/webp', len(img_bytes), None)
+                self.imageurl = self.image.url
+
+            super(Post, self).save(*args, **kwargs)
+        
 
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId is None:
-            self.uniqueId = f"{self.id+self.categoryId.uniqueId+self.subcategoryId.uniqueId+self.country.uniqueId}"
+            self.uniqueId = f"{ str(self.id)+self.categoryId.uniqueId+self.subcategoryId.uniqueId+self.country.uniqueId}"
             super(Post, self).save(*args, **kwargs)
 
         # For URL

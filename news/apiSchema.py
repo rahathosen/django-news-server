@@ -13,46 +13,7 @@ class PostType(DjangoObjectType):
     class Meta:
         model = Post
         fields = "__all__"
-
-# class ReporterType(DjangoObjectType):
-#     class Meta:
-#         model = Reporter
-#         fields = "__all__"
-
-# class ContinentType(DjangoObjectType):
-#     class Meta:
-#         model = Continent
-#         fields = "__all__"
-
-# class CountryType(DjangoObjectType):
-#     class Meta:
-#         model = Country
-#         fields = "__all__"
-
-# class DivisionType(DjangoObjectType):
-#     class Meta:
-#         model = Division
-#         fields = "__all__"
-
-# class DistrictType(DjangoObjectType):
-#     class Meta:
-#         model = District
-#         fields = "__all__"
-
-# class CityCorporationType(DjangoObjectType):
-#     class Meta:
-#         model = CityCorporation
-#         fields = "__all__"
-
-# class UpozilaType(DjangoObjectType):
-#     class Meta:
-#         model = Upozila
-#         fields = "__all__"
-
-# class ZipPostalCodeType(DjangoObjectType):
-#     class Meta:
-#         model = ZipPostalCode
-#         fields = "__all__"
+        
 
 
 class Query(graphene.ObjectType):
@@ -117,13 +78,7 @@ class Query(graphene.ObjectType):
     
 
     def resolve_post_by_category(self, info, category_id, **kwargs):
-        if category_id is not None:
-            obj = Post.objects.get(category_id=category_id)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
-        else:
-            return None
+        return Post.objects.filter(category_id=category_id)
     
     def resolve_post_by_sub_category(self, info, sub_category_id, **kwargs):
         return Post.objects.filter(sub_category_id=sub_category_id)
