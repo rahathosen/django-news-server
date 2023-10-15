@@ -8,7 +8,7 @@ class PostsTagAdmin(admin.ModelAdmin):
     prepopulated_fields = {'url': ('url',)}
 admin.site.register(PostsTag, PostsTagAdmin)
 
-admin.site.register(Continents)
+admin.site.register(Continent)
 admin.site.register(Country)
 admin.site.register(Division)
 admin.site.register(District)

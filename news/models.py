@@ -4,10 +4,6 @@ from django.utils.text import slugify
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import piexif
-# from gdstorage.storage import GoogleDriveStorage
-
-# Define Google Drive Storage
-# gd_storage = GoogleDriveStorage()
 
 from reporter.models import Reporter
 from categories.models import *
@@ -32,7 +28,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200, blank=True, null=True, verbose_name='Title')
     details = RichTextField(blank=True, null=True, verbose_name='Details')
     related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggestion')
-    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
+    continent = models.ForeignKey(Continent, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Country')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Division')
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='District')
@@ -44,7 +40,7 @@ class Post(models.Model):
     zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Zip Code')
     turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Tourism Spot')
     tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
-    image0 = models.ImageField(blank=True, null=True, upload_to='Post/images/webp', max_length=500, verbose_name='Image0')
+    image = models.ImageField(blank=True, null=True, verbose_name='Image')
     
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
@@ -54,9 +50,6 @@ class Post(models.Model):
     editor_reviewed = models.IntegerField(choices=YESNO, default=0, verbose_name='Editor Reviewed')
     url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True, verbose_name='URL (will be auto-generated)')
     total_view = models.PositiveIntegerField(default=0, verbose_name='Total View (*Do not edit)')
-
-    _image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp', max_length=500, verbose_name='_Image',)
-    imageurl = models.CharField(max_length=255, blank=True, null=True)
 
 
     class Meta:
@@ -93,8 +86,8 @@ class Post(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self._image:
-            img = Image.open(self._image)
+        if self.image:
+            img = Image.open(self.image)
             # Create an InMemoryUploadedFile 
             img = img.convert('RGB')
             img_data = BytesIO()
@@ -111,13 +104,13 @@ class Post(models.Model):
             img = Image.open(BytesIO(img_bytes))
             # img = self.add_watermark(img, watermark_path, watermark_text)
             # Create an InMemoryUploadedFile and save it to self._image
-            self._image = InMemoryUploadedFile(BytesIO(img_bytes), None, f"{self._image.name.split('.')[0]}.webp", 'image/webp', len(img_bytes), None)
-            self.imageurl = self._image.url
+            self.image = InMemoryUploadedFile(BytesIO(img_bytes), None, f"{self.image.name.split('.')[0]}.webp", 'image/webp', len(img_bytes), None)
+            self.imageurl = self.image.url
 
         super(Post, self).save(*args, **kwargs)
 
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId is None:
-            self.uniqueId = f"{self.id}{self.categoryId.uniqueId}{self.subcategoryId.uniqueId}{self.country.uniqueId}"
+            self.uniqueId = f"{self.id+self.categoryId.uniqueId+self.subcategoryId.uniqueId+self.country.uniqueId}"
             super(Post, self).save(*args, **kwargs)
 
         # For URL

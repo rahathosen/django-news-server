@@ -16,7 +16,7 @@ YESNO = (
     (1,"Yes")
 )
 
-class Continents(models.Model):
+class Continent(models.Model):
     uniqueId = models.CharField(max_length=20, blank=False, null=False, verbose_name='Continent Name in English without Space')
     name = models.CharField(max_length=20)
     image = models.ImageField(upload_to='News/Categories/Continents/',blank=True, null=True)
@@ -49,7 +49,7 @@ class Continents(models.Model):
 class Country(models.Model):
     uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Country Name in English without Space')
     cCode = models.CharField(max_length=4, blank=False, null=False, verbose_name='Country Code')
-    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING, blank=False)
+    continent = models.ForeignKey(Continent, on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
     capital = models.CharField(max_length=20, blank=True, null=True)
     currency = models.CharField(max_length=20, blank=True, null=True)

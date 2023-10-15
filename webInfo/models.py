@@ -69,7 +69,7 @@ class WebsiteInfo(models.Model):
         super(WebsiteInfo, self).save(*args, **kwargs)
 
 class Navigation(models.Model):
-    news = models.ManyToManyField(Continents, blank=True, verbose_name='In Nav News')
+    news = models.ManyToManyField(Continent, blank=True, verbose_name='In Nav News')
     news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
     news3 = models.ManyToManyField(Division, blank=True, verbose_name='In Nav News')
     news4 = models.ManyToManyField(District, blank=True, verbose_name='In Nav News')
@@ -136,7 +136,7 @@ class SectionBox(models.Model):
     items = models.ManyToManyField(NewsCategory, blank=True)
     items2 = models.ManyToManyField(NewsSubCategory, blank=True)
     items3 = models.ManyToManyField(PostsTag, blank=True)
-    items4 = models.ManyToManyField(Continents, blank=True)
+    items4 = models.ManyToManyField(Continent, blank=True)
     items5 = models.ManyToManyField(Country, blank=True)
     items6 = models.ManyToManyField(Division, blank=True)
     items7 = models.ManyToManyField(District, blank=True)
