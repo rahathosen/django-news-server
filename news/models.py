@@ -25,7 +25,8 @@ class Post(models.Model):
     uniqueId = models.CharField(max_length=100, blank=True, null=True)
     category = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Category')
     subcategory = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Sub Category')
-    title = models.CharField(max_length=200, blank=True, null=True, verbose_name='Title')
+    title = models.CharField(max_length=200, blank=False, verbose_name='Title')
+    description = models.CharField(max_length=500, blank=True, null= True, verbose_name= 'Description')
     details = RichTextField(blank=True, null=True, verbose_name='Details')
     related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggestion')
     continent = models.ForeignKey(Continent, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
@@ -41,7 +42,6 @@ class Post(models.Model):
     turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Tourism Spot')
     tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     image = models.ImageField(blank=True, null=True, verbose_name='Image')
-    
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
