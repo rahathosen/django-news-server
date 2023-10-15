@@ -1,7 +1,10 @@
 import graphene
 from graphene_django import DjangoObjectType
 
-from categories.models import NewsCategory, NewsSubCategory, Continents, Country, Division, District, CityCorporation, Upozila, ZipPostalCode, PostsTag
+from categories.models import *
+from news.models import *
+from reporter.models import *
+from news.apiSchema import *
 
 class NewsCategoryType(DjangoObjectType):
     class Meta:
@@ -13,9 +16,9 @@ class NewsSubCategoryType(DjangoObjectType):
         model = NewsSubCategory
         fields = "__all__"
 
-class ContinentsType(DjangoObjectType):
+class ContinentType(DjangoObjectType):
     class Meta:
-        model = Continents
+        model = Continent
         fields = "__all__"
 
 class CountryType(DjangoObjectType):
@@ -58,8 +61,8 @@ class Query(graphene.ObjectType):
     news_category = graphene.Field(NewsCategoryType, id=graphene.Int())
     news_sub_categories = graphene.List(NewsSubCategoryType, first = graphene.Int(), skip = graphene.Int())
     news_sub_category = graphene.Field(NewsSubCategoryType, id=graphene.Int())
-    continents = graphene.List(ContinentsType, first = graphene.Int(), skip = graphene.Int())
-    continent = graphene.Field(ContinentsType, id=graphene.Int())
+    Continent = graphene.List(ContinentType, first = graphene.Int(), skip = graphene.Int())
+    continent = graphene.Field(ContinentType, id=graphene.Int())
     countries = graphene.List(CountryType, first = graphene.Int(), skip = graphene.Int())
     country = graphene.Field(CountryType, id=graphene.Int())
     divisions = graphene.List(DivisionType, first = graphene.Int(), skip = graphene.Int())
@@ -111,19 +114,19 @@ class Query(graphene.ObjectType):
             return obj
         return None
     
-    def resolve_continents(self, info, first=None, skip=None, **kwargs):
-        continents = Continents.objects.all()
+    def resolve_Continent(self, info, first=None, skip=None, **kwargs):
+        Continent = Continent.objects.all()
         if skip:
-            continents = continents[skip:]
+            Continent = Continent[skip:]
         if first:
-            continents = continents[:first]
+            Continent = Continent[:first]
 
-        return continents
+        return Continent
     
     def resolve_continent(self, info, **kwargs):
         id = kwargs.get('id')
         if id is not None:
-            obj = Continents.objects.get(pk=id)
+            obj = Continent.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj            
@@ -281,9 +284,9 @@ schema = graphene.Schema(query=Query)
 #     totalView
 #   }
 
-# Continents Query
+# Continent Query
 # query {
-#   continents {
+#   Continent {
 #     id
 #     name
 #     details

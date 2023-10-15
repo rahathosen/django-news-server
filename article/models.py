@@ -71,15 +71,16 @@ class ArticleWritter(models.Model):
         return self.name
 
 class Article(models.Model):
-    uniqueId = models.CharField(max_length=20,  blank=True, null=True)
+    uniqueId = models.CharField(max_length=200,  blank=True, null=True)
     title = models.CharField(max_length=200,  blank=True, null=True)
     category = models.ForeignKey(ArticleCategory, on_delete=models.DO_NOTHING, blank=False, null=False)
     writter = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, blank=False, null=False)
-    tag = models.ManyToManyField(PostsTag, blank=False)
+    tag = models.ManyToManyField(PostsTag, blank=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Images',max_length=500)
     url = models.SlugField(allow_unicode=True, unique=True, max_length=200, null=True, blank=True)
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False)
+    related_article = models.ManyToManyField('self', blank=True)
     status = models.IntegerField(choices=STATUS, default = 0)
     editor_reviewed = models.IntegerField(choices=YESNO, default = 0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)

@@ -89,7 +89,7 @@ class FeaturePost(models.Model):
     title = models.CharField(max_length=200,  blank=True, null=True, verbose_name='Title')
     details = RichTextField(blank=True, null=True, verbose_name='Details')
     related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggation')
-    continent = models.ForeignKey(Continents, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
+    continent = models.ForeignKey(Continent, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Country')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Division')
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='District')

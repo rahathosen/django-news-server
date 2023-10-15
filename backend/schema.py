@@ -1,15 +1,25 @@
 import graphene
 import webInfo.apiSchema
-import news.apiSchema
+import advertisement.apiSchema
+import article.apiSchema
+import categories.apiSchema
 import feature.apiSchema
-
+import news.apiSchema
+import reporter.apiSchema
+import search.apiSchema
     
 class Query(
 
     # Add your Query objects here
     webInfo.apiSchema.Query,
-    news.apiSchema.Query,
+    advertisement.apiSchema.Query,
+    article.apiSchema.Query,
+    categories.apiSchema.Query,
     feature.apiSchema.Query,
+    news.apiSchema.Query,
+    reporter.apiSchema.Query,
+    search.apiSchema.Query,
+    
     graphene.ObjectType
 ):
     pass

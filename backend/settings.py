@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 import dotenv
-from google.oauth2 import service_account
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,7 +16,7 @@ if os.path.isfile(dotenv_file):
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5r#xglib)6ji)aztao)nc^_z6yb22!=)7vflxlmlls%au!0(7v'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,8 +36,7 @@ INSTALLED_APPS = [
     # Third party apps
     'graphene_django',
     'ckeditor',
-    'storages',
-    'gdstorage',
+    "cloudvault",
 
     # Created apps
     'advertisement',
@@ -138,25 +136,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-# # Use the Google Cloud Storage backend for media files
-# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-
-# # Google Cloud Storage settings
-# GS_BUCKET_NAME = 'your-bucket-name'
-# GS_PROJECT_ID = 'your-project-id'
-# GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-#     os.path.join(BASE_DIR, 'path-to-your-credentials.json')
-# )
-
-# Google Drive Storage Settings
-GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE =  os.path.join(BASE_DIR, 'techsand-4bc1e407883a.json')
-GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = '<base google drive path for file uploads>' # OPTIONAL
-
-
 
 # Path where media is stored
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -174,3 +157,12 @@ GRAPHENE = {
     "SCHEMA": "backend.schema.schema"
 }
 
+
+DEFAULT_FILE_STORAGE = "cloudvault.cloud_storage.CloudinaryStorage"
+# Configure Cloudinary
+CLOUDINARY = {
+    "cloud_name": os.environ['CLOUD_NAME'],
+    "api_key": os.environ['API_KEY'],
+    "api_secret": os.environ['API_SECRET']
+
+}
