@@ -70,20 +70,20 @@ class UpdatePoll(graphene.Mutation):
 
 
 class Query(graphene.ObjectType):
-    websiteInfo = graphene.Field(WebsiteInfoType)
+    websiteInfo = graphene.List(WebsiteInfoType)
 
-    navigation = graphene.Field(NavigationType)
+    navigation = graphene.List(NavigationType)
 
-    headLine = graphene.Field(HeadLineType, id=graphene.Int())
+    headLine = graphene.List(HeadLineType, id=graphene.Int())
     all_headLine = graphene.List(HeadLineType)
 
-    breakingNews = graphene.Field(BreakingNewsType, id=graphene.Int())
+    breakingNews = graphene.List(BreakingNewsType, id=graphene.Int())
     all_breakingNews = graphene.List(BreakingNewsType)
 
-    cover = graphene.Field(CoverType, id=graphene.Int())
+    cover = graphene.List(CoverType, id=graphene.Int())
     all_cover = graphene.List(CoverType)
     
-    poll = graphene.Field(PollType, id=graphene.Int())
+    poll = graphene.List(PollType, id=graphene.Int())
     all_poll = graphene.List(PollType)
 
     
