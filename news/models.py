@@ -114,12 +114,12 @@ class Post(models.Model):
         
 
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId is None:
-            self.uniqueId = f"{ str(self.id)+self.categoryId.uniqueId+self.subcategoryId.uniqueId+self.country.uniqueId}"
+            self.uniqueId = f"{ str(self.id)+self.category.uniqueId+self.subcategory.uniqueId+self.country.uniqueId}"
             super(Post, self).save(*args, **kwargs)
 
         # For URL
         if not self.url:
-            ur = f"{self.country+self.categoryId+self.title}"
+            ur = f"{self.country+self.category+self.title}"
             self.url = ur.replace(" ", "").replace(",", "").replace("-", "").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
             super().save(*args, **kwargs)
         if self.url:
