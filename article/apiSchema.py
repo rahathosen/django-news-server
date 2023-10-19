@@ -112,9 +112,11 @@ class Query(graphene.ObjectType):
     
     def resolve_related_article_by_writter_last_ten(self, info, writter_id, **kwargs):
         return Article.objects.filter(writter_id=writter_id).order_by(total_view='DESC')[:10]
+
+class Mutation(graphene.ObjectType):
+    pass   
     
-    
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
 
 # Test Query
 # Test article query

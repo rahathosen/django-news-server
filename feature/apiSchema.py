@@ -60,3 +60,8 @@ class Query(graphene.ObjectType):
             return FeaturePost.objects.get(uniqueId=uniqueId)
 
         return None
+
+class Mutation(graphene.ObjectType):
+    pass
+
+schema = graphene.Schema(query=Query, mutation=Mutation)

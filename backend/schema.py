@@ -26,7 +26,14 @@ class Query(
 
 class Mutation(
     # Add your Mutation objects here
+    advertisement.apiSchema.Mutation,
+    article.apiSchema.Mutation,
+    categories.apiSchema.Mutation,
+    news.apiSchema.Mutation,
     webInfo.apiSchema.Mutation,
+    reporter.apiSchema.Mutation,
+    feature.apiSchema.Mutation,
+    
     graphene.ObjectType
 ):
     pass

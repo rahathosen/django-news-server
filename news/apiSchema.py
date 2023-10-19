@@ -6,7 +6,6 @@ from news.models import *
 from reporter.models import *
 from article.models import *
 from webInfo.models import *
-
 from categories.apiSchema import *
 
 class PostType(DjangoObjectType):
@@ -157,9 +156,91 @@ class Query(graphene.ObjectType):
     def resolve_filter_post(self, info, category_id, sub_category_id, country_id, division_id, district_id, cityCorporation_id, upozila_id, zip_postal_code_id, tag_id, author_id, **kwargs):
         return Post.objects.filter(category_id=category_id, sub_category_id=sub_category_id, country_id=country_id, division_id=division_id, district_id=district_id, cityCorporation_id=cityCorporation_id, upozila_id=upozila_id, zip_postal_code_id=zip_postal_code_id, tag_id=tag_id, author_id=author_id)
 
+class PostInput(graphene.InputObjectType):
+    category_id = graphene.Int(required=True)
+    sub_category_id = graphene.Int(required=True)
+    continent_id = graphene.Int(required=True)
+    country_id = graphene.Int(required=True)
+    reported_by_id = graphene.Int(required=True)
+    title = graphene.String(required=True)
+    details = graphene.String(required=False)
+    image = graphene.String(required=False)
+    videoLink = graphene.String(required=False)
+    status = graphene.Int(required=True)
+    editorReviewed = graphene.Int(required=True)
+
+class CreatePost(graphene.Mutation):
+    class Arguments:
+        post_data = PostInput(required=True)
+
+    post = graphene.Field(PostType)
+
+    @staticmethod
+    def mutate(root, info, post_data=None):
+        post_instance = Post(
+            category_id=post_data.category_id,
+            sub_category_id=post_data.sub_category_id,
+            continent_id=post_data.continent_id,
+            country_id=post_data.country_id,
+            reported_by_id=post_data.reported_by_id,
+            title=post_data.title,
+            details=post_data.details,
+            image=post_data.image,
+            videoLink=post_data.videoLink,
+            status=post_data.status,
+            editorReviewed=post_data.editorReviewed,
+        )
+        post_instance.save()
+        return CreatePost(post=post_instance)
+
+class UpdatePost(graphene.Mutation):
+    class Arguments:
+        post_data = PostInput(required=True)
+        id = graphene.ID()
+
+    post = graphene.Field(PostType)
+
+    @staticmethod
+    def mutate(root, info, post_data=None, id=None):
+        post_instance = Post.objects.get(pk=id)
+
+        if post_instance:
+            post_instance.category_id = post_data.category_id
+            post_instance.sub_category_id = post_data.sub_category_id
+            post_instance.continent_id = post_data.continent_id
+            post_instance.country_id = post_data.country_id
+            post_instance.reported_by_id = post_data.reported_by_id
+            post_instance.title = post_data.title
+            post_instance.details = post_data.details
+            post_instance.image = post_data.image
+            post_instance.videoLink = post_data.videoLink
+            post_instance.status = post_data.status
+            post_instance.editorReviewed = post_data.editorReviewed
+            post_instance.save()
+
+            return UpdatePost(post=post_instance)
+        return UpdatePost(post=None)
+
+class DeletePost(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID()
+
+    post = graphene.Field(PostType)
+
+    @staticmethod
+    def mutate(root, info, id):
+        post_instance = Post.objects.get(pk=id)
+        post_instance.delete()
+
+        return None
+
+
+class Mutation(graphene.ObjectType):
+    create_post = CreatePost.Field()
+    update_post = UpdatePost.Field()
+    delete_post = DeletePost.Field()
     
-    
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
 
 # Test Query
 

@@ -6,6 +6,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 class Reporter(models.Model):
+    uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)
     name = models.CharField(max_length=100,blank=True, null=True)
     designation = models.CharField(max_length=200,blank=True, null=True)
     phone = models.CharField(max_length=40,blank=True, null=True)
