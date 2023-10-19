@@ -8,6 +8,13 @@ import piexif
 from reporter.models import Reporter
 from categories.models import *
 
+import random
+import string
+
+def rendomCodeGenertor():
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4))
+
+
 STATUS = (
     (0, "Draft"),
     (1, "Publish")
@@ -58,7 +65,7 @@ class Post(models.Model):
         verbose_name_plural = 'All Posts'
 
     def __str__(self):
-        return f"{self.title} - {self.categoryId.title} - {self.subcategoryId.title}"
+        return f"{self.title} - {self.category.title} - {self.subcategory.title}"
 
     def remove_exif(self, image_data):
         exif_dict = piexif.load(image_data)
@@ -111,15 +118,17 @@ class Post(models.Model):
                 self.imageurl = self.image.url
 
             super(Post, self).save(*args, **kwargs)
+        else:
+            pass
         
 
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId is None:
-            self.uniqueId = f"{ str(self.id)+self.category.uniqueId+self.subcategory.uniqueId+self.country.uniqueId}"
+            self.uniqueId = f"{self.category.uniqueId+self.subcategory.uniqueId+self.country.uniqueId+'-'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4))}"
             super(Post, self).save(*args, **kwargs)
 
         # For URL
         if not self.url:
-            ur = f"{self.country+self.category+self.title}"
+            ur = f"{self.country.uniqueId+self.category.uniqueId+self.title}"
             self.url = ur.replace(" ", "").replace(",", "").replace("-", "").replace(":", "").replace(";", "").replace("?", "").replace("!", "").replace(".", "").replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace("'", "").replace('"', "").replace("/", "").replace("\\", "").replace("|", "").replace("<", "").replace(">", "").replace("=", "").replace("+", "").replace("*", "").replace("&", "").replace("^", "").replace("%", "").replace("$", "").replace("#", "").replace("@", "")
             super().save(*args, **kwargs)
         if self.url:
