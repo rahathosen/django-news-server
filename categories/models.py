@@ -39,7 +39,7 @@ class Continent(models.Model):
             output = BytesIO()
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Continents/', output.getvalue(), None)
-        super(Continents, self).save(*args, **kwargs)
+        super(Continent, self).save(*args, **kwargs)
         # for url
         if not self.url: 
             self.url= self.uniqueId

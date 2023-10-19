@@ -17,7 +17,7 @@ class PostType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    post = graphene.Field(PostType, id=graphene.Int())
+    post = graphene.Field(PostType, id=graphene.Int(), uId = graphene.String(), url = graphene.String())
     all_posts = graphene.List(PostType)
    
     today_posts = graphene.List(PostType)
@@ -53,16 +53,49 @@ class Query(graphene.ObjectType):
                                 author_id=graphene.Int())
 
     
-    def resolve_post(self, info, **kwargs):
-        id = kwargs.get('id')
+    def resolve_post(self, info, id = None, url = None, uId = None, **kwargs):
+        pk = kwargs.get('pk')
         uniqueId = kwargs.get('uniqueId')
+        url = kwargs.get('url')
 
-        if id is not None:
+        if uId is not None:
+            obj = Post.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            print(obj.url)
+            return obj
+        elif url is not None:
+            obj = Post.objects.get(url=url)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        elif id is not None:
             obj = Post.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
-        return None
+
+        elif uniqueId is not None:
+            obj = Post.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        
+        elif url is not None:
+            obj = Post.objects.get(url=url)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        
+        elif pk is not None:
+            obj = Post.objects.get(pk=pk)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        
+        else:
+            return None
+        
     
     def resolve_all_posts(self, info, **kwargs):
         return Post.objects.all()

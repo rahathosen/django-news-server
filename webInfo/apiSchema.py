@@ -71,17 +71,10 @@ class UpdatePoll(graphene.Mutation):
 
 class Query(graphene.ObjectType):
     websiteInfo = graphene.Field(WebsiteInfoType)
-
     navigation = graphene.Field(NavigationType)
-
-    headLine = graphene.Field(HeadLineType, id=graphene.Int())
-    all_headLine = graphene.List(HeadLineType)
-
-    breakingNews = graphene.Field(BreakingNewsType, id=graphene.Int())
-    all_breakingNews = graphene.List(BreakingNewsType)
-
-    cover = graphene.Field(CoverType, id=graphene.Int())
-    all_cover = graphene.List(CoverType)
+    headLines = graphene.Field(HeadLineType)
+    breakingNews = graphene.Field(BreakingNewsType)
+    cover = graphene.Field(CoverType)
     
     poll = graphene.Field(PollType, id=graphene.Int())
     all_poll = graphene.List(PollType)
@@ -93,52 +86,23 @@ class Query(graphene.ObjectType):
         obj.save()
         return obj
     
-    def resolve_headLine(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            obj = HeadLine.objects.get(pk=id)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
-        else:
-            return None
+    def resolve_headLines(self, info, **kwargs):
+        obj = HeadLine.objects.last()
+        obj.total_view = obj.total_view + 1
+        obj.save()
+        return obj
 
     def resolve_navigation(self, info, **kwargs):
-        
-        if id is not None:
-            
-            return Navigation.objects.last()
-        else:
-            return None
-        
-    def resolve_all_headLine(self, info, **kwargs):
-        return HeadLine.objects.all()
+        return Navigation.objects.last()
     
     def resolve_breakingNews(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            obj = BreakingNews.objects.get(pk=id)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
-        else:
-            return None
-        
-    def resolve_all_breakingNews(self, info, **kwargs):
-        return BreakingNews.objects.all()
+        oj = BreakingNews.objects.last()
+        oj.total_view = oj.total_view + 1
+        oj.save()
+        return oj
     
     def resolve_cover(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:            
-            obj = Cover.objects.get(pk=id)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
-        else:
-            return None
-        
-    def resolve_all_cover(self, info, **kwargs):
-        return Cover.objects.all()
+        return Cover.objects.last()
 
     def resolve_poll(self, info, **kwargs):
         id = kwargs.get('id')
