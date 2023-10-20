@@ -8,6 +8,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from reporter.models import Reporter
 from article.models import ArticleWritter
 from categories.models import *
+import random
+import string
 
 STATUS = (
     (0,"Draft"),
@@ -18,14 +20,22 @@ YESNO = (
     (1,"Yes")
 )
 
+def convert_to_webp(image_field):
+    if image_field and image_field.name.split('.')[-1] == 'webp':
+        img = Image.open(image_field)
+        output = BytesIO()
+        img = img.convert('RGB')
+        img.save(output, format='WEBP', quality=95, subsampling=0)
+        output.seek(0)
+        image_field = InMemoryUploadedFile(output, 'ImageField', f"{image_field.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+    return image_field
 
 class Feature(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Feature Name in English without Space')
+    uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Feature Name in English without Space')
     title = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Feature/',blank=True, null=True)
-    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
     serial = models.PositiveIntegerField(default=0,blank=True)
     total_view = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -39,26 +49,18 @@ class Feature(models.Model):
     def __str__(self):
         return self.title
     
-    def save(self, *args, **kwargs):        
-        if self.image:
-            img = Image.open(self.image)
-            output = BytesIO()
-            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
-            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Tags/', output.getvalue(), None)
-        super(Feature, self).save(*args, **kwargs)
-        if not self.url:
-            self.url = self.uniqueId
-            return super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.image = convert_to_webp(self.image)
+        super().save(*args, **kwargs)   
 
 
 class FeatureCategory(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Category Name in English without Space')
-    featureId = models.ForeignKey(Feature, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature')
+    uniqueId = models.CharField( unique=True, max_length=20, blank=False, null=False, verbose_name='Category Name in English without Space')
+    feature = models.ForeignKey(Feature, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature')
     title = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Feature/',blank=True, null=True)
-    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
     serial = models.PositiveIntegerField(default=0,blank=True)
     total_view = models.PositiveIntegerField(default=0)
     
@@ -68,22 +70,14 @@ class FeatureCategory(models.Model):
         verbose_name = 'Feature Category'
 
     def __str__(self):
-        return self.title + self.featureId.title
+        return self.title + self.feature.title
     
     def save(self, *args, **kwargs):
-        if self.image:
-            img = Image.open(self.image)
-            output = BytesIO()
-            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
-            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Tags/', output.getvalue(), None)
-        super(FeatureCategory, self).save(*args, **kwargs)
-
-        if not self.url:
-            self.url = self.uniqueId + self.featureId.uniqueId
-            return super().save(*args, **kwargs)
+        self.image = convert_to_webp(self.image)
+        super().save(*args, **kwargs)   
 
 class FeaturePost(models.Model):
-    uniqueId = models.CharField(max_length=100,  blank=True, null=True)
+    uniqueId = models.CharField(unique=True, max_length=100,  blank=True, null=True)
     featureId = models.ForeignKey(Feature, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature')
     categoryId = models.ForeignKey(FeatureCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature Category')
     title = models.CharField(max_length=200,  blank=True, null=True, verbose_name='Title')
@@ -102,14 +96,15 @@ class FeaturePost(models.Model):
     turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
     tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image')
+    imageSource = models.CharField(max_length=100, blank=True, null=True, verbose_name='Image Source')
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
+    videoSource = models.CharField(max_length=100, blank=True, null=True, verbose_name='Video Source')
     reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     written_by = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Written By')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
     status = models.IntegerField(choices=STATUS, default = 0, verbose_name='Status')
     editor_reviewed = models.IntegerField(choices=YESNO, default = 0, verbose_name='Editor Reviewed')
-    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True, verbose_name='URL(will be auto generated)')
     total_view = models.PositiveIntegerField(default=0, verbose_name='Total View(*Do not edit)')
 
     class Meta:
@@ -130,6 +125,6 @@ class FeaturePost(models.Model):
         super(FeaturePost, self).save(*args, **kwargs)
     
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId == None:
-            self.uniqueId = str(self.id)+self.categoryId.uniqueId+self.featureId.uniqueId
+            self.uniqueId = self.featureId.uniqueId+self.categoryId.uniqueId+''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))
             return super().save(*args, **kwargs)
     

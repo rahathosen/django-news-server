@@ -6,7 +6,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 class Reporter(models.Model):
-    uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)
+    uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True, verbose_name= 'Reporter name in English without Space and comma')
     name = models.CharField(max_length=100,blank=True, null=True)
     designation = models.CharField(max_length=200,blank=True, null=True)
     phone = models.CharField(max_length=40,blank=True, null=True)
@@ -26,9 +26,16 @@ class Reporter(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        if self.image:
-            img = Image.open(self.image)
-            output = BytesIO()
-            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
-            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'Reporter/', output.getvalue(), None)
-        super(Reporter, self).save(*args, **kwargs)
+        if self.image.url != self.image.field.path:
+            if self.image:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'Article/images/webp', output.read(), None)
+            super().save(*args, **kwargs)
+
+        if self.uniqueId != " " or self.uniqueId != "" or self.uniqueId is not None:
+            self.uniqueId = self.uniqueId.replace(" ", "-")
+            super(Reporter, self).save(*args, **kwargs)

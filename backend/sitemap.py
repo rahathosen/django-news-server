@@ -1,6 +1,5 @@
 from django.contrib.sitemaps import Sitemap
 from news.models import *
-from advertisement.models import *
 from article.models import *
 from categories.models import *
 from reporter.models import *
@@ -15,7 +14,7 @@ class NewsSitemap(Sitemap):
         return Post.objects.filter(status=1).order_by('-created_at')
     
     def location(self, obj):
-        return f"/{obj.pk}/"
+        return f"/{obj.uniqueId}/"
     
     def lastmod(self, obj):
         return obj.updated_at.filter(status=1).order_by('-created_at')
@@ -27,7 +26,7 @@ class ArticleSiteMap(Sitemap):
         return Article.objects.filter(status=1).order_by('-created_at')
     
     def location(self, obj):
-        return f"/{obj.pk}/"
+        return f"/{obj.uniqueId}/"
     
     def lastmod(self, obj):
         return obj.updated_at.filter(status=1).order_by('-created_at')
@@ -39,7 +38,7 @@ class FeatureSiteMap(Sitemap):
         return Feature.objects.filter(status=1).order_by('-created_at')
     
     def location(self, obj):
-        return f"/{obj.pk}/"
+        return f"/{obj.uniqueId}/"
     
     def lastmod(self, obj):
         return obj.updated_at.filter(status=1).order_by('-created_at')

@@ -58,25 +58,25 @@ class PostsTagType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     news_categories = graphene.List(NewsCategoryType, first = graphene.Int(), skip = graphene.Int())
-    news_category = graphene.Field(NewsCategoryType, id=graphene.Int())
+    news_category = graphene.Field(NewsCategoryType, id=graphene.Int(), uId = graphene.String())
     news_sub_categories = graphene.List(NewsSubCategoryType, first = graphene.Int(), skip = graphene.Int())
-    news_sub_category = graphene.Field(NewsSubCategoryType, id=graphene.Int())
-    Continent = graphene.List(ContinentType, first = graphene.Int(), skip = graphene.Int())
-    continent = graphene.Field(ContinentType, id=graphene.Int())
+    news_sub_category = graphene.Field(NewsSubCategoryType, id=graphene.Int(), uId = graphene.String())
+    continents = graphene.List(ContinentType, first = graphene.Int(), skip = graphene.Int())
+    continent = graphene.Field(ContinentType, id=graphene.Int(), uId = graphene.String())
     countries = graphene.List(CountryType, first = graphene.Int(), skip = graphene.Int())
-    country = graphene.Field(CountryType, id=graphene.Int())
+    country = graphene.Field(CountryType, id=graphene.Int(), uId = graphene.String())
     divisions = graphene.List(DivisionType, first = graphene.Int(), skip = graphene.Int())
-    division = graphene.Field(DivisionType, id=graphene.Int())
+    division = graphene.Field(DivisionType, id=graphene.Int(), uId = graphene.String())
     districts = graphene.List(DistrictType, first = graphene.Int(), skip = graphene.Int())
-    district = graphene.Field(DistrictType, id=graphene.Int())
+    district = graphene.Field(DistrictType, id=graphene.Int(), uId = graphene.String())
     cityCorporations = graphene.List(DistrictType, first = graphene.Int(), skip = graphene.Int())
-    cityCorporation = graphene.Field(DistrictType, id=graphene.Int())
+    cityCorporation = graphene.Field(DistrictType, id=graphene.Int(), uId = graphene.String())
     upozilas = graphene.List(UpozilaType, first = graphene.Int(), skip = graphene.Int())
-    upozila = graphene.Field(UpozilaType, id=graphene.Int())
+    upozila = graphene.Field(UpozilaType, id=graphene.Int(), uId = graphene.String())
     zip_postal_codes = graphene.List(ZipPostalCodeType, first = graphene.Int(), skip = graphene.Int())
-    zip_postal_code = graphene.Field(ZipPostalCodeType, id=graphene.Int())
+    zip_postal_code = graphene.Field(ZipPostalCodeType, id=graphene.Int(), uId = graphene.String())
     posts_tags = graphene.List(PostsTagType, first = graphene.Int(), skip = graphene.Int())
-    posts_tag = graphene.Field(PostsTagType, id=graphene.Int())
+    posts_tag = graphene.Field(PostsTagType, id=graphene.Int(), uId = graphene.String())
 
     def resolve_news_categories(self, info, first=None, skip=None, **kwargs):
         news_categories = NewsCategory.objects.all()
@@ -87,13 +87,25 @@ class Query(graphene.ObjectType):
 
         return news_categories
     
-    def resolve_news_category(self, info, **kwargs):
+    def resolve_news_category(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = NewsCategory.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = NewsCategory.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = NewsCategory.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
+        
         return None
     
     def resolve_news_sub_categories(self, info, first=None, skip=None, **kwargs):
@@ -105,8 +117,19 @@ class Query(graphene.ObjectType):
 
         return news_sub_categories
     
-    def resolve_news_sub_category(self, info, **kwargs):
+    def resolve_news_sub_category(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = NewsSubCategory.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = NewsSubCategory.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = NewsSubCategory.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
@@ -114,23 +137,34 @@ class Query(graphene.ObjectType):
             return obj
         return None
     
-    def resolve_Continent(self, info, first=None, skip=None, **kwargs):
-        Continent = Continent.objects.all()
+    def resolve_continents(self, info, first=None, skip=None, **kwargs):
+        continents = Continent.objects.all()
         if skip:
-            Continent = Continent[skip:]
+            continents = continents[skip:]
         if first:
-            Continent = Continent[:first]
+            continents = continents[:first]
 
-        return Continent
+        return continents
     
-    def resolve_continent(self, info, **kwargs):
+    def resolve_continent(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = Continent.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj             
+        return None
+        if uniqueId is not None:
+            obj = Continent.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = Continent.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
-            return obj            
-        return None
+            return obj
     
     def resolve_countries(self, info, first=None, skip=None, **kwargs):
         countries = Country.objects.all()
@@ -141,8 +175,19 @@ class Query(graphene.ObjectType):
 
         return countries
     
-    def resolve_country(self, info, **kwargs):
+    def resolve_country(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = Country.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = Country.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = Country.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
@@ -159,13 +204,25 @@ class Query(graphene.ObjectType):
 
         return divisions
     
-    def resolve_division(self, info, **kwargs):
+    def resolve_division(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = Division.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = Division.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = Division.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
+        
         return None
     
     def resolve_districts(self, info, first=None, skip=None, **kwargs):
@@ -177,8 +234,19 @@ class Query(graphene.ObjectType):
 
         return districts
     
-    def resolve_district(self, info, **kwargs):
+    def resolve_district(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uniqueId is not None:
+            obj = District.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uId is not None:
+            obj = District.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = District.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
@@ -195,8 +263,19 @@ class Query(graphene.ObjectType):
 
         return city_corporations
     
-    def resolve_city_corporation(self, info, **kwargs):
+    def resolve_city_corporation(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = CityCorporation.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = CityCorporation.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = CityCorporation.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
@@ -213,8 +292,19 @@ class Query(graphene.ObjectType):
 
         return upozilas
     
-    def resolve_upozila(self, info, **kwargs):
+    def resolve_upozila(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = Upozila.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = Upozila.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = Upozila.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
@@ -231,8 +321,19 @@ class Query(graphene.ObjectType):
 
         return zip_postal_codes
     
-    def resolve_zip_postal_code(self, info, **kwargs):
+    def resolve_zip_postal_code(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = ZipPostalCode.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = ZipPostalCode.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = ZipPostalCode.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
@@ -249,8 +350,19 @@ class Query(graphene.ObjectType):
 
         return posts_tags
     
-    def resolve_posts_tag(self, info, **kwargs):
+    def resolve_posts_tag(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+        if uId is not None:
+            obj = PostsTag.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = PostsTag.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = PostsTag.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
