@@ -30,8 +30,11 @@ class Query(graphene.ObjectType):
             obj.save()
             return obj
         return None
+    
+class Mutation(graphene.ObjectType):
+    pass
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
 
 # Test Query
 

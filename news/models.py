@@ -122,7 +122,7 @@ class Post(models.Model):
         
 
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId is None:
-            self.uniqueId = f"{self.category.uniqueId+self.subcategory.uniqueId+self.country.uniqueId+'-'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4))}"
+            self.uniqueId = f"{self.country.uniqueId+self.category.uniqueId+self.subcategory.uniqueId+'-'.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4))}"
             super(Post, self).save(*args, **kwargs)
 
         # For URL
