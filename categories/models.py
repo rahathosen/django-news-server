@@ -26,7 +26,7 @@ class Continent(models.Model):
     total_view = models.PositiveIntegerField(default=0)
     
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Continents'
         verbose_name = 'Continent'
 
@@ -61,7 +61,7 @@ class Country(models.Model):
     total_view = models.PositiveIntegerField(default=0)
   
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Countries'
         verbose_name = 'Country'
     
@@ -93,7 +93,7 @@ class Division(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Divisions'
         verbose_name = 'Division'
 
@@ -125,7 +125,7 @@ class District(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "division"]
+        ordering = ["name"]
         verbose_name_plural = 'Districts'
         verbose_name = 'District'
    
@@ -159,7 +159,7 @@ class CityCorporation(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "division", "district"]
+        ordering = ["name"]
         verbose_name_plural = 'City Corporations'
         verbose_name = 'City Corporation'
    
@@ -192,7 +192,7 @@ class Upozila(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "district"]
+        ordering = ["name"]
         verbose_name_plural = 'Upozilas'
         verbose_name = 'Upozila'
    
@@ -224,7 +224,7 @@ class Pourosava(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "upozila", "district"]
+        ordering = ["name"]
         verbose_name_plural = 'Pourosavas'
         verbose_name = 'Pourosava'
 
@@ -257,7 +257,7 @@ class Thana(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "district", "cityCorporation", "upozila"]
+        ordering = ["name"]
         verbose_name_plural = 'Thanas'
         verbose_name = 'Thana'
 
@@ -290,7 +290,7 @@ class Union(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "upozila"]
+        ordering = ["name"]
         verbose_name_plural = 'Unions'
         verbose_name = 'Union'
 
@@ -324,7 +324,7 @@ class ZipPostalCode(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "district", "cityCorporation", "upozila"]
+        ordering = ["name"]
         verbose_name_plural = 'Zip Postal Codes'
         verbose_name = 'Zip Postal Code'
    
@@ -361,7 +361,7 @@ class TurisumSpot(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name", "district", "cityCorporation", "upozila", "zipCode", "union"]
+        ordering = ["name"]
         verbose_name_plural = 'Turisum Spots'
         verbose_name = 'Turisum Spot'
 
@@ -383,7 +383,6 @@ class TurisumSpot(models.Model):
         return super().save(*args, **kwargs)
     
 
-
         
 class NewsCategory(models.Model):
     uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='Category Name in English without Space')
@@ -396,7 +395,7 @@ class NewsCategory(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial", "title", "total_view"]
+        ordering = ["title"]
         verbose_name_plural = 'News Categories'
         verbose_name = 'News Category'
    
@@ -430,12 +429,12 @@ class NewsSubCategory(models.Model):
     total_view = models.PositiveIntegerField(default=0)
    
     class Meta:
-        ordering = ["serial", "category", "title", "total_view"]
+        ordering = ["title"]
         verbose_name_plural = 'News Sub Categories'
         verbose_name = 'News Sub Category'
    
     def __str__(self):
-        return self.title + ' - Category: ' + str(self.categoryId.title)
+        return self.title + ' - Category: ' + str(self.category.title)
     
     def save(self, *args, **kwargs):
         if self.image:
@@ -462,7 +461,7 @@ class PostsTag(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["title", "uniqueId", "total_view"]
+        ordering = ["title"]
         verbose_name_plural = 'Post Tags'
         verbose_name = 'Post Tag'
 
