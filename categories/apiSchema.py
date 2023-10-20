@@ -257,8 +257,171 @@ class Query(graphene.ObjectType):
             obj.save()
             return obj
         return None
+
+class NewsCategoryInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    serial = graphene.Int(required=False)
+
+class NewsSubCategoryInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    categoryId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+
+class ContinentInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    serial = graphene.Int(required=False)
+
+
+class CountryInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    continentId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class DivisionInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    countryId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class DistrictInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    divisionId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class CityCorporationInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    divisionId = graphene.Int()
+    districtId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class UpozilaInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    districtId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class PourosavaInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    upozilaId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class ThanaInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    districtId = graphene.Int()
+    cityCorporationId = graphene.Int()
+    upozilaId = graphene.Int() 
+    serial = graphene.Int(required=False)
+
+class UnionInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    upozilaId = graphene.Int() 
+    pourosavaId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class TurisumSpotInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    districtId = graphene.Int()
+    cityCorporationId = graphene.Int()
+    upozilaId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class ZipPostalCodeInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    districtId = graphene.Int()
+    cityCorporationId = graphene.Int()
+    upozilaId = graphene.Int()
+    serial = graphene.Int(required=False)
+
+class PostsTagInput(graphene.InputObjectType):
+    uniqueId = graphene.String()
+    name = graphene.String()
+    serial = graphene.Int(required=False)
+
+class CreateNewsCategory(graphene.Mutation):
+    class Arguments:
+        input = NewsCategoryInput(required=True)
+
+    newsCategory = graphene.Field(NewsCategoryType)
+
+    @classmethod
+    def mutate(cls, root, info, input):
+        newsCategory = NewsCategory(
+            uniqueId = input.uniqueId,
+            name = input.name,
+            serial = input.serial
+        )
+        newsCategory.save()
+        return CreateNewsCategory(newsCategory=newsCategory)
+
+class UpdateNewsCategory(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID()
+        input = NewsCategoryInput(required=True)
+
+    newsCategory = graphene.Field(NewsCategoryType)
+
+    @classmethod
+    def mutate(cls, root, info, id, input):
+        newsCategory = NewsCategory.objects.get(pk=id)
+        newsCategory.uniqueId = input.uniqueId
+        newsCategory.name = input.name
+        newsCategory.serial = input.serial
+        newsCategory.save()
+        return UpdateNewsCategory(newsCategory=newsCategory)
+
+class CreateNewsSubCategory(graphene.Mutation):
+    class Arguments:
+        input = NewsSubCategoryInput(required=True)
+
+    newsSubCategory = graphene.Field(NewsSubCategoryType)
+
+    @classmethod
+    def mutate(cls, root, info, input):
+        newsSubCategory = NewsSubCategory(
+            uniqueId = input.uniqueId,
+            name = input.name,
+            categoryId = input.categoryId,
+            serial = input.serial
+        )
+        newsSubCategory.save()
+        return CreateNewsSubCategory(newsSubCategory=newsSubCategory)
+
+class UpdateNewsSubCategory(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID()
+        input = NewsSubCategoryInput(required=True)
+
+    newsSubCategory = graphene.Field(NewsSubCategoryType)
+
+    @classmethod
+    def mutate(cls, root, info, id, input):
+        newsSubCategory = NewsSubCategory.objects.get(pk=id)
+        newsSubCategory.uniqueId = input.uniqueId
+        newsSubCategory.name = input.name
+        newsSubCategory.categoryId = input.categoryId
+        newsSubCategory.serial = input.serial
+        newsSubCategory.save()
+        return UpdateNewsSubCategory(newsSubCategory=newsSubCategory)
+
+class Mutation(graphene.ObjectType):
+    create_news_category = CreateNewsCategory.Field()
+    update_news_category = UpdateNewsCategory.Field()
+    create_news_sub_category = CreateNewsSubCategory.Field()
+    update_news_sub_category = UpdateNewsSubCategory.Field()
     
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
 
 # Test Query
 

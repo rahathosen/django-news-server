@@ -29,13 +29,10 @@ OWN_WATERMARK_TEXT = "Your Watermark Text"
 
 
 class Post(models.Model):
-    uniqueId = models.CharField(max_length=100, blank=True, null=True)
+    uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)
+    reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     category = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Category')
     subcategory = models.ForeignKey(NewsSubCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Sub Category')
-    title = models.CharField(max_length=200, blank=False, verbose_name='Title')
-    description = models.CharField(max_length=500, blank=True, null= True, verbose_name= 'Description')
-    details = RichTextField(blank=True, null=True, verbose_name='Details')
-    related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggestion')
     continent = models.ForeignKey(Continent, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Country')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Division')
@@ -47,10 +44,13 @@ class Post(models.Model):
     union = models.ForeignKey(Union, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Union')
     zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Zip Code')
     turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Tourism Spot')
-    tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
+    title = models.CharField(max_length=200, blank=False, verbose_name='Title')
+    description = models.CharField(max_length=500, blank=True, null= True, verbose_name= 'Description')
+    details = RichTextField(blank=True, null=True, verbose_name='Details')
+    related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggestion')
     image = models.ImageField(blank=True, null=True, verbose_name='Image')
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
-    reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
+    tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
     status = models.IntegerField(choices=STATUS, default=0, verbose_name='Status')
@@ -93,8 +93,7 @@ class Post(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.image.url == "":
-
+        if self.image.url == "" or self.image.url == None or self.image.url == " ":
         
             if self.image:
                 img = Image.open(self.image)

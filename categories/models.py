@@ -17,7 +17,7 @@ YESNO = (
 )
 
 class Continent(models.Model):
-    uniqueId = models.CharField(max_length=20, blank=False, null=False, verbose_name='Continent Name in English without Space')
+    uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Continent Name in English without Space')
     name = models.CharField(max_length=20)
     image = models.ImageField(upload_to='News/Categories/Continents/',blank=True, null=True)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -26,7 +26,7 @@ class Continent(models.Model):
     total_view = models.PositiveIntegerField(default=0)
     
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Continents'
         verbose_name = 'Continent'
 
@@ -47,8 +47,8 @@ class Continent(models.Model):
                     
     
 class Country(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Country Name in English without Space')
-    cCode = models.CharField(max_length=4, blank=False, null=False, verbose_name='Country Code')
+    uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Country Name in English without Space')
+    cCode = models.CharField(unique=True, max_length=4, blank=False, null=False, verbose_name='Country Code')
     continent = models.ForeignKey(Continent, on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
     capital = models.CharField(max_length=20, blank=True, null=True)
@@ -61,7 +61,7 @@ class Country(models.Model):
     total_view = models.PositiveIntegerField(default=0)
   
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Countries'
         verbose_name = 'Country'
     
@@ -83,7 +83,7 @@ class Country(models.Model):
         return super().save(*args, **kwargs)
 
 class Division(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Division Name in English without Space')
+    uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='Division Name in English without Space')
     country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -93,7 +93,7 @@ class Division(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Divisions'
         verbose_name = 'Division'
 
@@ -115,7 +115,7 @@ class Division(models.Model):
         return super().save(*args, **kwargs)
 
 class District(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='District Name in English without Space')
+    uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='District Name in English without Space')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -125,7 +125,7 @@ class District(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Districts'
         verbose_name = 'District'
    
@@ -148,7 +148,7 @@ class District(models.Model):
         return super().save(*args, **kwargs)
     
 class CityCorporation(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='City Corporation Name in English without Space')
+    uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='City Corporation Name in English without Space')
     division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=False)
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
@@ -159,7 +159,7 @@ class CityCorporation(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'City Corporations'
         verbose_name = 'City Corporation'
    
@@ -182,7 +182,7 @@ class CityCorporation(models.Model):
         return super().save(*args, **kwargs)
    
 class Upozila(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Upozila Name in English without Space')
+    uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Upozila Name in English without Space')
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -192,7 +192,7 @@ class Upozila(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Upozilas'
         verbose_name = 'Upozila'
    
@@ -215,6 +215,7 @@ class Upozila(models.Model):
 
 class Pourosava(models.Model):
     uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Pourosava Name in English without Space')
+    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True)
     upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -223,6 +224,7 @@ class Pourosava(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
+        ordering = ["name"]
         verbose_name_plural = 'Pourosavas'
         verbose_name = 'Pourosava'
 
@@ -255,6 +257,7 @@ class Thana(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
+        ordering = ["name"]
         verbose_name_plural = 'Thanas'
         verbose_name = 'Thana'
 
@@ -287,7 +290,7 @@ class Union(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Unions'
         verbose_name = 'Union'
 
@@ -307,13 +310,49 @@ class Union(models.Model):
         if self.url:
             self.url = self.url.replace(" ", "").replace(",", "")
         return super().save(*args, **kwargs)
+class ZipPostalCode(models.Model):
+    uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Zip Postal Code + Name in English without Space')
+    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=False, null=False)
+    cityCorporation = models.ForeignKey(CityCorporation, on_delete=models.DO_NOTHING, blank=True, null=True)
+    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null = True)
+    name = models.CharField(max_length=50)
+    zipCode = models.CharField(unique=True, max_length=20)
+    sortDetails = models.CharField(max_length=200, blank=True, null=True)
+    image = models.ImageField(upload_to='News/Categories/ZipPostalCode/',blank=True, null=True)
+    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
+    serial = models.PositiveIntegerField(default=0,blank=True)
+    total_view = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = 'Zip Postal Codes'
+        verbose_name = 'Zip Postal Code'
+   
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):        
+        if self.image:
+            img = Image.open(self.image)
+            output = BytesIO()
+            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
+            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/ZipPostalCode/', output.getvalue(), None)
+        super(ZipPostalCode, self).save(*args, **kwargs)
+
+        if not self.url:
+            self.url = self.uniqueId + self.district.uniqueId
+        if self.url:        
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
     
 class TurisumSpot(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Tourist Spot Name in English without Space')
+    uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Tourist Spot Name in English without Space')
     district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=False)
-    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null = True)
     cityCorporation = models.ForeignKey(CityCorporation, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=50)
+    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null = True)
+    zipCode = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING, blank=True, null=True)
+    union = models.ForeignKey(Union, on_delete=models.DO_NOTHING, blank=True, null=True)
+    name = models.CharField(max_length=50, blank=False, null=False)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/TurisumSpot/',blank=True, null=True)
@@ -322,7 +361,7 @@ class TurisumSpot(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["name"]
         verbose_name_plural = 'Turisum Spots'
         verbose_name = 'Turisum Spot'
 
@@ -344,38 +383,9 @@ class TurisumSpot(models.Model):
         return super().save(*args, **kwargs)
     
 
-class ZipPostalCode(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Zip Postal Code Name in English without Space')
-    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=False, null=False)
-    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null = True)
-    cityCorporation = models.ForeignKey(CityCorporation, on_delete=models.DO_NOTHING, blank=True, null=True)
-    name = models.CharField(max_length=50)
-    zipCode = models.CharField(max_length=20)
-    sortDetails = models.CharField(max_length=200, blank=True, null=True)
-    image = models.ImageField(upload_to='News/Categories/ZipPostalCode/',blank=True, null=True)
-    url = models.SlugField(allow_unicode=True, unique=True, max_length=250, null=True, blank=True)
-    serial = models.PositiveIntegerField(default=0,blank=True)
-    total_view = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        ordering = ["serial"]
-        verbose_name_plural = 'Zip Postal Codes'
-        verbose_name = 'Zip Postal Code'
-   
-    def __str__(self):
-        return self.name
-    
-    def save(self, *args, **kwargs):        
-        if self.image:
-            img = Image.open(self.image)
-            output = BytesIO()
-            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
-            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/ZipPostalCode/', output.getvalue(), None)
-        super(ZipPostalCode, self).save(*args, **kwargs)
-
         
 class NewsCategory(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Category Name in English without Space')
+    uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='Category Name in English without Space')
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='News/Categories/Category/',blank=True, null=True)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -385,7 +395,7 @@ class NewsCategory(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["title"]
         verbose_name_plural = 'News Categories'
         verbose_name = 'News Category'
    
@@ -400,10 +410,16 @@ class NewsCategory(models.Model):
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Category/', output.getvalue(), None)
         super(NewsCategory, self).save(*args, **kwargs)
 
+        if not self.url:
+            self.url = self.uniqueId
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
+
   
 class NewsSubCategory(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Sub Category Name in English without Space')
-    categoryId = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False)
+    uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Sub Category Name in English without Space')
+    category = models.ForeignKey(NewsCategory, on_delete=models.DO_NOTHING, blank=False, null=False)
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='News/Categories/SubCategory/',blank=True, null=True)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
@@ -413,12 +429,12 @@ class NewsSubCategory(models.Model):
     total_view = models.PositiveIntegerField(default=0)
    
     class Meta:
-        ordering = ["serial"]
+        ordering = ["title"]
         verbose_name_plural = 'News Sub Categories'
         verbose_name = 'News Sub Category'
    
     def __str__(self):
-        return self.title + ' - Category: ' + str(self.categoryId.title)
+        return self.title + ' - Category: ' + str(self.category.title)
     
     def save(self, *args, **kwargs):
         if self.image:
@@ -428,9 +444,14 @@ class NewsSubCategory(models.Model):
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/SubCategory/', output.getvalue(), None)
         super(NewsSubCategory, self).save(*args, **kwargs)
 
+        if not self.url:
+            self.url = self.uniqueId + self.category.uniqueId
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+
 
 class PostsTag(models.Model):
-    uniqueId = models.CharField(max_length=50, blank=False, null=False, verbose_name='Tag Name in English without Space')
+    uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Tag Name in English without Space')
     title = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
@@ -440,7 +461,7 @@ class PostsTag(models.Model):
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["serial"]
+        ordering = ["title"]
         verbose_name_plural = 'Post Tags'
         verbose_name = 'Post Tag'
 
@@ -454,5 +475,11 @@ class PostsTag(models.Model):
             img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
             self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Categories/Tags/', output.getvalue(), None)
         super(PostsTag, self).save(*args, **kwargs)
+
+        if not self.url:
+            self.url = self.uniqueId
+        if self.url:
+            self.url = self.url.replace(" ", "").replace(",", "")
+        return super().save(*args, **kwargs)
 
 

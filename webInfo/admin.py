@@ -1,7 +1,7 @@
 from django.contrib import admin
 from webInfo.models import *
-# Register your models here.
 
+# Register your models here.
 admin.site.register(WebsiteInfo)
 admin.site.register(Navigation)
 admin.site.register(HeadLine)
@@ -12,4 +12,5 @@ admin.site.register(Poll)
 
 
 
-# admin.site.register(HomePageSection)
+
+

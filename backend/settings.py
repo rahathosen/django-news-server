@@ -6,11 +6,10 @@ import dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
-
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -25,7 +24,6 @@ ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,11 +47,27 @@ INSTALLED_APPS = [
     'feature',
 
 ]
+
 if DEBUG:
     INSTALLED_APPS += [
+    # Third party apps 
+    'import_export',
+
+    # Created apps
     'search',
     ]
+if not DEBUG:
+    IMPORT_EXPORT_USE_TRANSACTIONS = True
+    
+# Define the DJANGO_SETTINGS_MODULE environment variable
+os.environ['DJANGO_SETTINGS_MODULE'] = 'backend.settings'
 
+# Call the settings.configure() function
+from django.conf import settings
+settings.configure(
+    INSTALLED_APPS = INSTALLED_APPS,
+
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,15 +155,9 @@ USE_TZ = True
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # MEDIA_URL = '/media/'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 # Base url to serve media files
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 STATIC_URL = '/static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -166,3 +174,9 @@ CLOUDINARY = {
     "api_secret": os.environ['API_SECRET']
 
 }
+CSRF_TRUSTED_ORIGINS = [ 
+    'https://dailyudayan.com',
+    'https://www.dailyudayan.com',
+    'http://dailyudayan.com',
+
+]

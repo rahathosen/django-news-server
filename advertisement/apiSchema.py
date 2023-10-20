@@ -80,4 +80,7 @@ class Query(graphene.ObjectType):
             return obj
         return None
     
-schema = graphene.Schema(query=Query)
+class Mutation(graphene.ObjectType):
+    pass
+    
+schema = graphene.Schema(query=Query, mutation=Mutation)
