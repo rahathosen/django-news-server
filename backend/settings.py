@@ -56,18 +56,18 @@ if DEBUG:
     # Created apps
     'search',
     ]
-if not DEBUG:
-    IMPORT_EXPORT_USE_TRANSACTIONS = True
+# if not DEBUG:
+#     IMPORT_EXPORT_USE_TRANSACTIONS = True
     
-# Define the DJANGO_SETTINGS_MODULE environment variable
-os.environ['DJANGO_SETTINGS_MODULE'] = 'backend.settings'
+# # Define the DJANGO_SETTINGS_MODULE environment variable
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'backend.settings'
 
-# Call the settings.configure() function
-from django.conf import settings
-settings.configure(
-    INSTALLED_APPS = INSTALLED_APPS,
+# # Call the settings.configure() function
+# from django.conf import settings
+# settings.configure(
+#     INSTALLED_APPS = INSTALLED_APPS,
 
-)
+# )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -174,9 +174,9 @@ CLOUDINARY = {
     "api_secret": os.environ['API_SECRET']
 
 }
-CSRF_TRUSTED_ORIGINS = [ 
-    'https://dailyudayan.com',
-    'https://www.dailyudayan.com',
-    'http://dailyudayan.com',
+# CSRF_TRUSTED_ORIGINS = [ 
+#     'https://dailyudayan.com',
+#     'https://www.dailyudayan.com',
+#     'http://dailyudayan.com',
 
-]
+# ]
