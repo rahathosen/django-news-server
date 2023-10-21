@@ -16,19 +16,19 @@ class PostType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    post = graphene.Field(PostType, id=graphene.Int(), uId = graphene.String(), url = graphene.String())
+    post = graphene.Field(PostType, id=graphene.Int(), uId = graphene.String())
     all_posts = graphene.List(PostType)
    
     today_posts = graphene.List(PostType)
     last_week_popular_post  = graphene.List(PostType)
     last_month_popular_post = graphene.List(PostType)
 
-    post_by_category = graphene.List(PostType, category_id=graphene.Int())
-    post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int())
-    post_by_country = graphene.List(PostType, country_id=graphene.Int())
-    post_by_division = graphene.List(PostType, division_id=graphene.Int())
-    post_by_district = graphene.List(PostType, district_id=graphene.Int())
-    post_by_cityCorporation = graphene.List(PostType, cityCorporation_id=graphene.Int())
+    post_by_category = graphene.List(PostType, category_id=graphene.Int(), uId = graphene.String())
+    post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int(), uId = graphene.String())
+    post_by_country = graphene.List(PostType, country_id=graphene.Int(), uId = graphene.String())
+    post_by_division = graphene.List(PostType, division_id=graphene.Int(), uId = graphene.String())
+    post_by_district = graphene.List(PostType, district_id=graphene.Int(), uId = graphene.String())
+    post_by_cityCorporation = graphene.List(PostType, cityCorporation_id=graphene.Int(), uId = graphene.String())
     post_by_upozila = graphene.List(PostType, upozila_id=graphene.Int())
     post_by_Thana = graphene.List(PostType, thana_id=graphene.Int())
     post_by_pourosava = graphene.List(PostType, pourosava_id=graphene.Int())
@@ -52,36 +52,25 @@ class Query(graphene.ObjectType):
                                 author_id=graphene.Int())
 
     
-    def resolve_post(self, info, id = None, url = None, uId = None, **kwargs):
+    def resolve_post(self, info, uId = None, **kwargs):
+        id = kwargs.get('id')
         pk = kwargs.get('pk')
         uniqueId = kwargs.get('uniqueId')
-        url = kwargs.get('url')
 
         if uId is not None:
             obj = Post.objects.get(uniqueId=uId)
             obj.total_view = obj.total_view + 1
             obj.save()
-            print(obj.url)
             return obj
-        elif url is not None:
-            obj = Post.objects.get(url=url)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
+        
         elif id is not None:
             obj = Post.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
-
+        
         elif uniqueId is not None:
             obj = Post.objects.get(uniqueId=uniqueId)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
-        
-        elif url is not None:
-            obj = Post.objects.get(url=url)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj

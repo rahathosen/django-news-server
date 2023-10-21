@@ -10,7 +10,7 @@ from reporter.models import Reporter
 from news.models import Post
 from categories.models import *
 from article.models import ArticleCategory, ArticleWritter, Article 
-from feature.models import Feature, FeatureCategory, FeaturePost
+# from feature.models import Feature, FeatureCategory, FeaturePost
 
 STATUS = (
     (0,"Draft"),
@@ -23,7 +23,6 @@ YESNO = (
 
 
 class WebsiteInfo(models.Model):
-    # language = models.ForeignKey(Language, on_delete=models.DO_NOTHING, blank=False, null=False, default= 1)
     title = models.CharField(max_length=50, null=False, blank=False, verbose_name='Website Title')
     tagLine = models.TextField(blank=True, default= "", verbose_name='Tag Line/ Slogan')
     url = models.CharField(max_length=50,blank=True, default= "", verbose_name='Website URL' )
@@ -53,20 +52,39 @@ class WebsiteInfo(models.Model):
 
     class Meta:
         ordering = ["-updated_at"]
-        verbose_name_plural = 'Website Info'
+        verbose_name_plural = 'Website Infos'
         verbose_name = 'Website Info'
-
 
     def __str__(self):
         return self.title
     
     def save(self, *args, **kwargs):
-        if self.newsThumbnail:
+        if self.logo and self.logo.name.split('.')[-1] == 'webp':
+            img = Image.open(self.logo)
+            output = BytesIO()
+            img = img.convert('RGB')
+            img.save(output, format='WEBP', quality=95, subsampling=0)
+            output.seek(0)
+            self.logo = InMemoryUploadedFile(output, 'ImageField', f"{self.logo.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+        super().save(*args, **kwargs)
+        if self.newsThumbnail and self.newsThumbnail.name.split('.')[-1] == 'webp':
             img = Image.open(self.newsThumbnail)
             output = BytesIO()
-            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
-            self.newsThumbnail = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'website_info/newsThumbnail', output.getvalue(), None)
-        super(WebsiteInfo, self).save(*args, **kwargs)
+            img = img.convert('RGB')
+            img.save(output, format='WEBP', quality=95, subsampling=0)
+            output.seek(0)
+            self.newsThumbnail = InMemoryUploadedFile(output, 'ImageField', f"{self.newsThumbnail.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+        super().save(*args, **kwargs)
+        if self.favicon and self.favicon.name.split('.')[-1] == 'webp':
+            img = Image.open(self.favicon)
+            output = BytesIO()
+            img = img.convert('RGB')
+            img.save(output, format='WEBP', quality=95, subsampling=0)
+            output.seek(0)
+            self.favicon = InMemoryUploadedFile(output, 'ImageField', f"{self.favicon.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+        super().save(*args, **kwargs)
+
+
 
 class Navigation(models.Model):
     news = models.ManyToManyField(Continent, blank=True, verbose_name='In Nav News')
@@ -76,7 +94,7 @@ class Navigation(models.Model):
     news5 = models.ManyToManyField(CityCorporation, blank=True, verbose_name='In Nav News')
     news6 = models.ManyToManyField(TurisumSpot, blank=True, verbose_name='In Nav News')
     categories = models.ManyToManyField(NewsCategory, blank=False, verbose_name='In Nav Categories(Do not select 8 more)')
-    feature = models.ManyToManyField(Feature, blank=True, verbose_name='In News feature')
+    # feature = models.ManyToManyField(Feature, blank=True, verbose_name='In News feature')
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -122,7 +140,6 @@ class Cover(models.Model):
         verbose_name_plural = 'Cover / প্রচ্ছদ'
         verbose_name = 'Cover / প্রচ্ছদ'
         
-
     def __str__(self):
         return f"'Last updated' + ' - ' + {self.updated_at}"
 
@@ -173,10 +190,10 @@ class Poll(models.Model):
     end_at = models.DateTimeField(blank=False)
     total_view = models.PositiveIntegerField(default=0)
 
-    def __str__(self):
-        return f"{self.question}"
-
     def save(self, *args, **kwargs):
         self.total_view = self.total_view + 1
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.question}"
     
