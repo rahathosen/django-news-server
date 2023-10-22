@@ -37,7 +37,7 @@ class Query(graphene.ObjectType):
     def resolve_all_feature_post(self, info, **kwargs):
         return FeaturePost.objects.all()
     
-    def resolve_feature_category(self, info, **kwargs):
+    def resolve_feature_category(self, info, uniqueId, **kwargs):
         id = kwargs.get('id')
         uniqueId = kwargs.get('uniqueId')
 
@@ -49,7 +49,7 @@ class Query(graphene.ObjectType):
 
         return None
     
-    def resolve_feature_post(self, info, **kwargs):
+    def resolve_feature_post(self, info, uniqueId, **kwargs):
         id = kwargs.get('id')
         uniqueId = kwargs.get('uniqueId')
 

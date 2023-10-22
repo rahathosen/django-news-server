@@ -10,7 +10,7 @@ from reporter.models import Reporter
 from news.models import Post
 from categories.models import *
 from article.models import ArticleCategory, ArticleWritter, Article 
-# from feature.models import Feature, FeatureCategory, FeaturePost
+from feature.models import Feature, FeatureCategory, FeaturePost
 
 STATUS = (
     (0,"Draft"),
@@ -33,11 +33,14 @@ class WebsiteInfo(models.Model):
     twitter_url = models.CharField(max_length=200,blank=True, default= "", verbose_name='Twitter URL' )
     youtube_url = models.CharField(max_length=200,blank=True, default= "", verbose_name='Youtube URL' )
     instagram_url = models.CharField(max_length=200,blank=True, default= "", verbose_name='Instagram URL' )
+    linkedin_url = models.CharField(max_length=200,blank=True, default= "", verbose_name='Linkedin URL' )
     address = models.CharField(max_length=200,blank=True, default= "", verbose_name='Address')
     contact1 = models.CharField(max_length=20,blank=True, default= "", verbose_name='Contact Nubmer 1')
     contact2 = models.CharField(max_length=20,blank=True, default= "", verbose_name='Contact Nubmer 2')
     email = models.CharField(max_length=200,blank=True, default= "", verbose_name='Email Address')
     whatsapp = models.CharField(max_length=200,blank=True, default= "", verbose_name='Whatsapp Number')
+    telegram = models.CharField(max_length=200,blank=True, default= "", verbose_name='Telegram Number')
+    google_map = models.TextField(blank=True, default= "", verbose_name='Google Map')
     copyright_text = models.CharField(max_length=500, default= "")
     about_us = RichTextField(blank=True, default= "")
     contact_us = RichTextField(blank=True, default= "")
@@ -48,7 +51,6 @@ class WebsiteInfo(models.Model):
     ios_app_url = models.CharField(max_length=200,blank=True, default= "")
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
-    total_view = models.PositiveBigIntegerField(default=0)
 
     class Meta:
         ordering = ["-updated_at"]
@@ -85,7 +87,6 @@ class WebsiteInfo(models.Model):
         super().save(*args, **kwargs)
 
 
-
 class Navigation(models.Model):
     news = models.ManyToManyField(Continent, blank=True, verbose_name='In Nav News')
     news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
@@ -94,7 +95,7 @@ class Navigation(models.Model):
     news5 = models.ManyToManyField(CityCorporation, blank=True, verbose_name='In Nav News')
     news6 = models.ManyToManyField(TurisumSpot, blank=True, verbose_name='In Nav News')
     categories = models.ManyToManyField(NewsCategory, blank=False, verbose_name='In Nav Categories(Do not select 8 more)')
-    # feature = models.ManyToManyField(Feature, blank=True, verbose_name='In News feature')
+    feature = models.ManyToManyField(Feature, blank=True, verbose_name='In News feature')
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -111,8 +112,8 @@ class HeadLine(models.Model):
 
     class Meta:
         ordering = ["-updated_at"]
-        verbose_name_plural = 'Headlines / শিরোনাম'
-        verbose_name = 'Headline / শিরোনাম'
+        verbose_name_plural = 'Headlines'
+        verbose_name = 'Headline'
 
     def __str__(self):
         return f"'Last updated' + ' - ' + {self.updated_at}"
@@ -131,14 +132,13 @@ class BreakingNews(models.Model):
         return f"'Last updated' + ' - ' + {self.updated_at}"
     
 class Cover(models.Model):
-    headNews = models.ForeignKey(Post, on_delete=models.DO_NOTHING, blank=False, verbose_name='Head Line News')
-    # SideBoxitems = models.ManyToManyField(Post, blank=True, verbose_name='Side Box items')
+    headNews = models.ForeignKey(Post, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, verbose_name='Head Line News')
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-updated_at"]
-        verbose_name_plural = 'Cover / প্রচ্ছদ'
-        verbose_name = 'Cover / প্রচ্ছদ'
+        verbose_name_plural = 'Cover'
+        verbose_name = 'Cover'
         
     def __str__(self):
         return f"'Last updated' + ' - ' + {self.updated_at}"
@@ -149,7 +149,7 @@ class SectionBox(models.Model):
     image = models.ImageField(upload_to='sectionBox/images/webp',blank=True, null=True)
     title = models.CharField(max_length=50, blank=False)
     details = models.TextField(blank=True, null=True)
-    heighlighted = models.ForeignKey(Post, on_delete=models.DO_NOTHING, blank=False, verbose_name='Heighlighted News')
+    heighlighted = models.ForeignKey(Post, to_field= 'uniqueId', on_delete=models.DO_NOTHING, blank=False, verbose_name='Heighlighted News')
     items = models.ManyToManyField(NewsCategory, blank=True)
     items2 = models.ManyToManyField(NewsSubCategory, blank=True)
     items3 = models.ManyToManyField(PostsTag, blank=True)
@@ -158,6 +158,8 @@ class SectionBox(models.Model):
     items6 = models.ManyToManyField(Division, blank=True)
     items7 = models.ManyToManyField(District, blank=True)
     items8 = models.ManyToManyField(CityCorporation, blank=True)
+    items9 = models.ManyToManyField(ArticleCategory, blank=True)
+    items10 = models.ManyToManyField(ArticleWritter, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -178,6 +180,7 @@ class SectionBox(models.Model):
         super(SectionBox, self).save(*args, **kwargs)
 
 class Poll(models.Model):
+    uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)
     question = models.TextField()
     option_one = models.CharField(max_length=30)
     option_two = models.CharField(max_length=30)
@@ -196,4 +199,9 @@ class Poll(models.Model):
 
     def __str__(self):
         return f"{self.question}"
+    
+    class Meta:
+        ordering = ["-updated_at"]
+        verbose_name_plural = 'Polls'
+        verbose_name = 'Poll'
     

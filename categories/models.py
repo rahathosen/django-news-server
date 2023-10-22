@@ -159,7 +159,7 @@ class Upozila(models.Model):
 class Pourosava(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Pourosava Name in English without Space')
     district = models.ForeignKey(District, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True)
-    upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=False)
+    upozila = models.ForeignKey(Upozila, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False)
     name = models.CharField(max_length=50)
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Pourosava/',blank=True, null=True)

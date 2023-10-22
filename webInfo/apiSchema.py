@@ -82,14 +82,10 @@ class Query(graphene.ObjectType):
     
     def resolve_websiteInfo(self, info, **kwargs):
         obj = WebsiteInfo.objects.last()
-        obj.total_view = obj.total_view + 1
-        obj.save()
         return obj
     
     def resolve_headLines(self, info, **kwargs):
         obj = HeadLine.objects.last()
-        obj.total_view = obj.total_view + 1
-        obj.save()
         return obj
 
     def resolve_navigation(self, info, **kwargs):
@@ -97,8 +93,6 @@ class Query(graphene.ObjectType):
     
     def resolve_breakingNews(self, info, **kwargs):
         oj = BreakingNews.objects.last()
-        oj.total_view = oj.total_view + 1
-        oj.save()
         return oj
     
     def resolve_cover(self, info, **kwargs):

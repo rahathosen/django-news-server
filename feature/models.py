@@ -78,29 +78,30 @@ class FeatureCategory(models.Model):
 
 class FeaturePost(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100,  blank=True, null=True)
-    featureId = models.ForeignKey(Feature, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature')
-    categoryId = models.ForeignKey(FeatureCategory, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature Category')
+    feature = models.ForeignKey(Feature, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature')
+    category = models.ForeignKey(FeatureCategory, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature Category')
     title = models.CharField(max_length=200,  blank=True, null=True, verbose_name='Title')
+    description = models.CharField(max_length=500, blank=True, null=True, verbose_name='Description')
     details = RichTextField(blank=True, null=True, verbose_name='Details')
     related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggation')
-    continent = models.ForeignKey(Continent, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
-    country = models.ForeignKey(Country, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Country')
-    division = models.ForeignKey(Division, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Division')
-    district = models.ForeignKey(District, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='District')
-    city_corporation = models.ForeignKey(CityCorporation, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='City Corporation')
+    continent = models.ForeignKey(Continent, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
+    country = models.ForeignKey(Country, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Country')
+    division = models.ForeignKey(Division, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Division')
+    district = models.ForeignKey(District, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='District')
+    city_corporation = models.ForeignKey(CityCorporation, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='City Corporation')
     upozila = models.ForeignKey(Upozila, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Upozila')
-    pourosava = models.ForeignKey(Pourosava, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Pourosava')
-    thana = models.ForeignKey(Thana, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Thana')
-    union = models.ForeignKey(Union, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Union')
-    zip_code = models.ForeignKey(ZipPostalCode, on_delete=models.DO_NOTHING, blank=True, null= True, verbose_name='Zip Code')
-    turisum_spot = models.ForeignKey(TurisumSpot, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
+    pourosava = models.ForeignKey(Pourosava, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Pourosava')
+    thana = models.ForeignKey(Thana, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Thana')
+    union = models.ForeignKey(Union, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Union')
+    zip_code = models.ForeignKey(ZipPostalCode, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null= True, verbose_name='Zip Code')
+    turisum_spot = models.ForeignKey(TurisumSpot, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
     tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image')
     imageSource = models.CharField(max_length=100, blank=True, null=True, verbose_name='Image Source')
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
     videoSource = models.CharField(max_length=100, blank=True, null=True, verbose_name='Video Source')
-    reported_by = models.ForeignKey(Reporter, on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
-    written_by = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Written By')
+    reported_by = models.ForeignKey(Reporter, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
+    written_by = models.ForeignKey(ArticleWritter, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Written By')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
     status = models.IntegerField(choices=STATUS, default = 0, verbose_name='Status')
@@ -113,7 +114,7 @@ class FeaturePost(models.Model):
         verbose_name = 'Feature Post'
 
     def __str__(self):
-        return self.title + ' - ' + str(self.categoryId.title) + ' - ' + str(self.featureId.title)
+        return self.title + ' - ' + str(self.category.title) + ' - ' + str(self.feature.title)
     
     def save(self, *args, **kwargs):
         # for image
@@ -125,6 +126,6 @@ class FeaturePost(models.Model):
         super(FeaturePost, self).save(*args, **kwargs)
     
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId == None:
-            self.uniqueId = self.featureId.uniqueId+self.categoryId.uniqueId+''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))
+            self.uniqueId = self.feature.uniqueId+self.category.uniqueId+''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))
             return super().save(*args, **kwargs)
     

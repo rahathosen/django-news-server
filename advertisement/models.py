@@ -22,6 +22,7 @@ def randomString(stringLength=10):
 
 #Advertisement section
 class AdBox(models.Model):
+    uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Unique Id will be generated automatically')
     position =  models.CharField(max_length=50, blank=True, null=True)
     size =  models.CharField(max_length=50, blank=True, null=True)
     active = models.IntegerField(choices=YESNO, default = 0)
@@ -35,6 +36,7 @@ class AdBox(models.Model):
         return self.position + " - " + self.size
 
 class AdCompany(models.Model):
+    uniqueId = models.CharField(unique=True, default= randomString, max_length=20, blank=False, null=False, verbose_name='Unique Id will be generated automatically')
     name = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Advertisement/company/',max_length=500)
     link = models.CharField(max_length=200, blank=True, null=True, verbose_name='Company Link')
@@ -51,13 +53,13 @@ class AdCompany(models.Model):
 
 
 class Advertisement(models.Model):
-    uniqueId = models.CharField(unique=True, default= randomString, max_length=20, blank=False, null=False, verbose_name='Unique Id will be generated automatically')
-    add_company = models.ForeignKey(AdCompany, on_delete=models.DO_NOTHING, blank=True, null=True)
+    uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Unique Id will be generated automatically')
+    add_company = models.ForeignKey(AdCompany, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True)
     title = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Advertisement/Adds/',max_length=500)
     link = models.CharField(max_length=200, blank=True, null=True)
     embed_code = models.TextField(blank=True, null=True)
-    addBox = models.ForeignKey(AdBox, on_delete=models.DO_NOTHING, blank=True, null=True)
+    addBox = models.ForeignKey(AdBox, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.IntegerField(choices=STATUS, default = 0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
@@ -65,6 +67,7 @@ class Advertisement(models.Model):
     stop_at = models.DateTimeField(blank=False, null=False)
 
     class Meta:
+        ordering = ["-created_at"]
         verbose_name_plural = 'Advertisements'
         verbose_name = 'Advertisement'
 

@@ -5,8 +5,6 @@ import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
@@ -56,18 +54,6 @@ if DEBUG:
     # Created apps
     'search',
     ]
-# if not DEBUG:
-#     IMPORT_EXPORT_USE_TRANSACTIONS = True
-    
-# # Define the DJANGO_SETTINGS_MODULE environment variable
-# os.environ['DJANGO_SETTINGS_MODULE'] = 'backend.settings'
-
-# # Call the settings.configure() function
-# from django.conf import settings
-# settings.configure(
-#     INSTALLED_APPS = INSTALLED_APPS,
-
-# )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
