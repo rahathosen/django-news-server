@@ -21,7 +21,6 @@ YESNO = (
     (1,"Yes")
 )
 
-
 class WebsiteInfo(models.Model):
     title = models.CharField(max_length=50, null=False, blank=False, verbose_name='Website Title')
     tagLine = models.TextField(blank=True, default= "", verbose_name='Tag Line/ Slogan')
@@ -61,32 +60,20 @@ class WebsiteInfo(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        if self.logo and self.logo.name.split('.')[-1] == 'webp':
-            img = Image.open(self.logo)
-            output = BytesIO()
-            img = img.convert('RGB')
-            img.save(output, format='WEBP', quality=95, subsampling=0)
-            output.seek(0)
-            self.logo = InMemoryUploadedFile(output, 'ImageField', f"{self.logo.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-        super().save(*args, **kwargs)
-        if self.newsThumbnail and self.newsThumbnail.name.split('.')[-1] == 'webp':
-            img = Image.open(self.newsThumbnail)
-            output = BytesIO()
-            img = img.convert('RGB')
-            img.save(output, format='WEBP', quality=95, subsampling=0)
-            output.seek(0)
-            self.newsThumbnail = InMemoryUploadedFile(output, 'ImageField', f"{self.newsThumbnail.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-        super().save(*args, **kwargs)
-        if self.favicon and self.favicon.name.split('.')[-1] == 'webp':
-            img = Image.open(self.favicon)
-            output = BytesIO()
-            img = img.convert('RGB')
-            img.save(output, format='WEBP', quality=95, subsampling=0)
-            output.seek(0)
-            self.favicon = InMemoryUploadedFile(output, 'ImageField', f"{self.favicon.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-        super().save(*args, **kwargs)
+        image = self.newsThumbnail
+        if image:
+            if image.name.endswith('.webp') or image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.newsThumbnail)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.newsThumbnail = InMemoryUploadedFile(output, 'ImageField', f"{self.newsThumbnail.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
-
+        
 class Navigation(models.Model):
     news = models.ManyToManyField(Continent, blank=True, verbose_name='In Nav News')
     news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
@@ -173,11 +160,16 @@ class SectionBox(models.Model):
     
     def save(self, *args, **kwargs):
         if self.image:
-            img = Image.open(self.image)
-            output = BytesIO()
-            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
-            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'sectionBox/images/webp', output.getvalue(), None)
-        super(SectionBox, self).save(*args, **kwargs)
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class Poll(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)

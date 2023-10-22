@@ -26,15 +26,17 @@ class Reporter(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        if self.image.url != self.image.field.path:
-            if self.image:
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
                 img = Image.open(self.image)
                 output = BytesIO()
                 img = img.convert('RGB')
                 img.save(output, format='WEBP', quality=95, subsampling=0)
                 output.seek(0)
-                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'Article/images/webp', output.read(), None)
-            super().save(*args, **kwargs)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
         if self.uniqueId != " " or self.uniqueId != "" or self.uniqueId is not None:
             self.uniqueId = self.uniqueId.replace(" ", "-")

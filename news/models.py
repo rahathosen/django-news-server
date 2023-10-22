@@ -70,6 +70,7 @@ class Post(models.Model):
                 img.save(output, format='WEBP', quality=95, subsampling=0)
                 output.seek(0)
                 self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'Post/images/webp', output.read(), None)
+                super(Post, self).save(*args, **kwargs)
         
         if not self.uniqueId or not self.uniqueId.strip():
             uid = f"{self.country.uniqueId}{self.category.uniqueId}{self.subcategory.uniqueId}{''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))}"

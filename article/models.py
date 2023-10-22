@@ -20,15 +20,6 @@ YESNO = (
     (1, "Yes")
 )
 
-def convert_to_webp(image_field):
-    if image_field and image_field.name.split('.')[-1] == 'webp':
-        img = Image.open(image_field)
-        output = BytesIO()
-        img = img.convert('RGB')
-        img.save(output, format='WEBP', quality=95, subsampling=0)
-        output.seek(0)
-        image_field = InMemoryUploadedFile(output, 'ImageField', f"{image_field.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-    return image_field
 
 # Article section
 class ArticleCategory(models.Model):
@@ -39,24 +30,56 @@ class ArticleCategory(models.Model):
     serial = models.PositiveBigIntegerField(default=0, blank=True, null=True)
     total_view = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = 'Article Categories'
+        verbose_name = 'Article Category'
+
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)  
+        if self.image:
+            if self.image.name.endswith('.webp'):
+                pass 
+            elif self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class ArticleWritter(models.Model):
     uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Writer name in English without Space and comma')
     name = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Writer/', max_length=500)
-    details = RichTextField(blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     total_view = models.PositiveIntegerField(default=0)
 
+    class Meta:
+       ordering = ["name"]
+       verbose_name_plural = 'Article Writters'
+       verbose_name = 'Article Writter'
+
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)  
+        if self.image:
+            if self.image.name.endswith('.webp'):
+                pass
+            elif self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super(ArticleWritter, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -79,10 +102,24 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     total_view = models.PositiveIntegerField(default=0)
 
-    def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)  
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name_plural = 'Articles'
+        verbose_name = 'Article'
 
+    def save(self, *args, **kwargs):
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
+                
         if not self.uniqueId:
             uId = f"{self.category.uniqueId}{self.writter.uniqueId}{''.join(random.choice(string.ascii_letters) for _ in range(4))}"
             self.uniqueId = slugify(uId)

@@ -15,15 +15,6 @@ YESNO = (
     (1,"Yes")
 )
 
-def convert_to_webp(image_field):
-    if image_field and image_field.name.split('.')[-1] == 'webp':
-        img = Image.open(image_field)
-        output = BytesIO()
-        img = img.convert('RGB')
-        img.save(output, format='WEBP', quality=95, subsampling=0)
-        output.seek(0)
-        image_field = InMemoryUploadedFile(output, 'ImageField', f"{image_field.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-    return image_field
 
 
 class Continent(models.Model):
@@ -43,8 +34,17 @@ class Continent(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)         
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)        
     
 class Country(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Country Name in English without Space')
@@ -68,8 +68,17 @@ class Country(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class Division(models.Model):
     uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='Division Name in English without Space')
@@ -89,8 +98,17 @@ class Division(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
         
 class District(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='District Name in English without Space')
@@ -110,9 +128,19 @@ class District(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
+        
 class CityCorporation(models.Model):
     uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='City Corporation Name in English without Space')
     division = models.ForeignKey(Division, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False)
@@ -132,8 +160,17 @@ class CityCorporation(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
    
 class Upozila(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Upozila Name in English without Space')
@@ -153,8 +190,17 @@ class Upozila(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class Pourosava(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Pourosava Name in English without Space')
@@ -174,8 +220,17 @@ class Pourosava(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
     
 class Thana(models.Model):
     uniqueId = models.CharField(unique= True, max_length=50, blank=False, null=False, verbose_name='Thana Name in English without Space')
@@ -196,8 +251,17 @@ class Thana(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class Union(models.Model):
     uniqueId = models.CharField(unique = True, max_length=50, blank=False, null=False, verbose_name='Union Name in English without Space')
@@ -217,8 +281,17 @@ class Union(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class ZipPostalCode(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Zip Postal Code + Name in English without Space')
@@ -241,8 +314,17 @@ class ZipPostalCode(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
     
 class TurisumSpot(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Tourist Spot Name in English without Space')
@@ -267,8 +349,17 @@ class TurisumSpot(models.Model):
         return self.name + ' - District: ' + str(self.district.name)
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
         
 class NewsCategory(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Category Name in English without Space')
@@ -288,8 +379,17 @@ class NewsCategory(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
   
 class NewsSubCategory(models.Model):
@@ -311,8 +411,17 @@ class NewsSubCategory(models.Model):
         return self.title + ' - Category: ' + str(self.category.title)
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class PostsTag(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Tag Name in English without Space')
@@ -332,7 +441,16 @@ class PostsTag(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs) 
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 

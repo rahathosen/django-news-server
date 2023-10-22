@@ -20,16 +20,6 @@ YESNO = (
     (1,"Yes")
 )
 
-def convert_to_webp(image_field):
-    if image_field and image_field.name.split('.')[-1] == 'webp':
-        img = Image.open(image_field)
-        output = BytesIO()
-        img = img.convert('RGB')
-        img.save(output, format='WEBP', quality=95, subsampling=0)
-        output.seek(0)
-        image_field = InMemoryUploadedFile(output, 'ImageField', f"{image_field.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-    return image_field
-
 class Feature(models.Model):
     uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Feature Name in English without Space')
     title = models.CharField(max_length=50)
@@ -50,9 +40,17 @@ class Feature(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)   
-
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class FeatureCategory(models.Model):
     uniqueId = models.CharField( unique=True, max_length=20, blank=False, null=False, verbose_name='Category Name in English without Space')
@@ -73,8 +71,17 @@ class FeatureCategory(models.Model):
         return self.title + self.feature.title
     
     def save(self, *args, **kwargs):
-        self.image = convert_to_webp(self.image)
-        super().save(*args, **kwargs)   
+        if self.image:
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
 
 class FeaturePost(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100,  blank=True, null=True)
@@ -117,13 +124,17 @@ class FeaturePost(models.Model):
         return self.title + ' - ' + str(self.category.title) + ' - ' + str(self.feature.title)
     
     def save(self, *args, **kwargs):
-        # for image
         if self.image:
-            img = Image.open(self.image)
-            output = BytesIO()
-            img.convert('RGB').save(output, format='webp', maxsize=(800, 800))
-            self.image = InMemoryUploadedFile(output,'ImageField', "%s.webp" %self.image.name.split('.')[0], 'News/Post/images/webp', output.getvalue(), None)
-        super(FeaturePost, self).save(*args, **kwargs)
+            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+                pass
+            else:
+                img = Image.open(self.image)
+                output = BytesIO()
+                img = img.convert('RGB')
+                img.save(output, format='WEBP', quality=95, subsampling=0)
+                output.seek(0)
+                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
+                super().save(*args, **kwargs)
     
         if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId == None:
             self.uniqueId = self.feature.uniqueId+self.category.uniqueId+''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))

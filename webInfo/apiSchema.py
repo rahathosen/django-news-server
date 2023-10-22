@@ -102,64 +102,16 @@ class Query(graphene.ObjectType):
         id = kwargs.get('id')
         if id is not None:
             obj = Poll.objects.get(pk=id)
-            obj.total_view = obj.total_view + 1
-            obj.save()
             return obj
         else:
             return None
         
     def resolve_all_poll(self, info, **kwargs):
 
-        update_objects = []
         allP =  Poll.objects.all()
-        for obj in allP:
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            update_objects.append(obj)
-
-        return update_objects
+        return allP
     
 class Mutation(graphene.ObjectType):
     update_poll = UpdatePoll.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
-
-# test query
-# query {
-#   poll(id: 1) {
-#     id
-#     question
-#     totalView
-#   }
-# }
-
-# query {
-#   allPoll {
-#     id
-#     question
-#     totalView
-#   }
-# }
-
-# query{
-#   websiteInfo{
-#     id
-#     title
-#     url
-#     logo
-#     favicon
-#     newsThumbnail
-#     facebookUrl
-#     twitterUrl
-#     youtubeUrl
-#     instagramUrl
-#     address
-#     contact1
-#     contact2
-#     email
-#     whatsapp
-#     shortDetails
-#     totalView
-    
-#   }
-# }
