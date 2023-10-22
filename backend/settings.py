@@ -20,6 +20,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '*']
 
+SESSION_COOKIE_SECURE = False
 
 # Application definition
 INSTALLED_APPS = [

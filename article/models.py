@@ -24,8 +24,8 @@ YESNO = (
 # Article section
 class ArticleCategory(models.Model):
     uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Category name in English without Space and comma')
-    name = models.CharField(max_length=200, blank=True, null=True)
-    details = RichTextField(blank=True, null=True)
+    name = models.CharField(default="", max_length=200, blank=False, null=False)
+    details = models.TextField(default="", blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Category/', max_length=500)
     serial = models.PositiveBigIntegerField(default=0, blank=True, null=True)
     total_view = models.PositiveIntegerField(default=0)
@@ -55,7 +55,7 @@ class ArticleCategory(models.Model):
 
 class ArticleWritter(models.Model):
     uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Writer name in English without Space and comma')
-    name = models.CharField(max_length=200, blank=True, null=True)
+    name = models.CharField(default= "", max_length=200, blank= False, null=False)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Writer/', max_length=500)
     details = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -87,7 +87,7 @@ class ArticleWritter(models.Model):
 class Article(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)
     category = models.ForeignKey(ArticleCategory, to_field= 'uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False)
-    writter = models.ForeignKey(ArticleWritter, to_field= 'uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False)
+    writter = models.ForeignKey(ArticleWritter, on_delete=models.DO_NOTHING, blank=False, null=False)
     reported_by = models.ForeignKey(Reporter, to_field= 'uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False)
     title = models.CharField(max_length=200, blank=True, null=True)
     description = models.CharField(max_length=500, blank=True, null=True)
