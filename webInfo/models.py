@@ -10,6 +10,7 @@ from news.models import Post
 from categories.models import *
 from article.models import ArticleCategory, ArticleWritter, Article 
 from feature.models import Feature, FeatureCategory, FeaturePost
+from advertisement.models import Advertisement
 
 STATUS = (
     (0,"Draft"),
@@ -131,6 +132,7 @@ class SectionBox(models.Model):
     items8 = models.ManyToManyField(CityCorporation, blank=True)
     items9 = models.ManyToManyField(ArticleCategory, blank=True)
     items10 = models.ManyToManyField(ArticleWritter, blank=True)
+    adbox_top = models.ForeignKey(Advertisement, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, related_name='adbox_top')
     serial = models.PositiveIntegerField(default=0, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)

@@ -69,12 +69,12 @@ class Advertisement(models.Model):
     image = models.ImageField(blank=True, null=True, upload_to='Advertisement/Adds/',max_length=500)
     link = models.CharField(max_length=200, blank=True, null=True)
     embed_code = models.TextField(blank=True, null=True)
-    addBox = models.ForeignKey(AdBox, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False)
+    addBox = models.ForeignKey(AdBox, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.IntegerField(choices=STATUS, default = 0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
-    total_view = models.PositiveIntegerField(default=0)
     stop_at = models.DateTimeField(blank=False, null=False)
+    total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ["-created_at"]
@@ -86,7 +86,7 @@ class Advertisement(models.Model):
 
     def save(self, *args, **kwargs):
 
-        if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId is None:
+        if self.uniqueId or self.uniqueId is None:
             uri = self.add_company.name + str(self.addBox.position) + str(self.addBox.size) + ''.join(random.choice(string.ascii_uppercase) for _ in range(3))
             self.uniqueId = slugify(uri).replace("-", "")
             super(Advertisement, self).save(*args, **kwargs)

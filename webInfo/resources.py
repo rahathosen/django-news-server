@@ -200,7 +200,7 @@ class SectionResource(resources.ModelResource):
         fields = ('id', 'uniqueId', 'background_color', 'image',
                   'title', 'details', 'heighlighted', 'items', 
                   'items2', 'items3', 'items4', 'items5', 'items6',
-                  'items7', 'items8', 'items9', 'items10',
+                  'items7', 'items8', 'items9', 'items10', 'adbox_top',
                   'created_at', 'updated_at')
 
 class HeadLineResource(resources.ModelResource):
