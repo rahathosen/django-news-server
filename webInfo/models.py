@@ -1,6 +1,5 @@
 from django.db import models
 from ckeditor.fields import RichTextField
-from django.utils.text import slugify
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -58,21 +57,6 @@ class WebsiteInfo(models.Model):
 
     def __str__(self):
         return self.title
-    
-    def save(self, *args, **kwargs):
-        image = self.newsThumbnail
-        if image:
-            if image.name.endswith('.webp') or image.url.endswith('.webp'):
-                pass
-            else:
-                img = Image.open(self.newsThumbnail)
-                output = BytesIO()
-                img = img.convert('RGB')
-                img.save(output, format='WEBP', quality=95, subsampling=0)
-                output.seek(0)
-                self.newsThumbnail = InMemoryUploadedFile(output, 'ImageField', f"{self.newsThumbnail.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-                super().save(*args, **kwargs)
-
         
 class Navigation(models.Model):
     news = models.ManyToManyField(Continent, blank=True, verbose_name='In Nav News')
@@ -147,6 +131,7 @@ class SectionBox(models.Model):
     items8 = models.ManyToManyField(CityCorporation, blank=True)
     items9 = models.ManyToManyField(ArticleCategory, blank=True)
     items10 = models.ManyToManyField(ArticleWritter, blank=True)
+    serial = models.PositiveIntegerField(default=0, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -157,19 +142,6 @@ class SectionBox(models.Model):
 
     def __str__(self):
         return f"{self.title + '-' + str(self.updated_at)}"
-    
-    def save(self, *args, **kwargs):
-        if self.image:
-            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
-                pass
-            else:
-                img = Image.open(self.image)
-                output = BytesIO()
-                img = img.convert('RGB')
-                img.save(output, format='WEBP', quality=95, subsampling=0)
-                output.seek(0)
-                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-                super().save(*args, **kwargs)
 
 class Poll(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)

@@ -21,7 +21,7 @@ class ArticleWritterType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     articles = graphene.List(ArticleType, first = graphene.Int(), skip = graphene.Int())
-    article = graphene.Field(ArticleType, id=graphene.Int())
+    article = graphene.Field(ArticleType, id=graphene.Int(), uId=graphene.String())
     article_categories = graphene.List(ArticleCategoryType, first = graphene.Int(), skip = graphene.Int())
     article_category = graphene.Field(ArticleCategoryType, id=graphene.Int())
     article_writters = graphene.List(ArticleWritterType, first = graphene.Int(), skip = graphene.Int())
@@ -47,8 +47,20 @@ class Query(graphene.ObjectType):
 
         return articles
     
-    def resolve_article(self, info, **kwargs):
+    def resolve_article(self, info, uId, **kwargs):
         id = kwargs.get('id')
+        uniqueId = kwargs.get('uId')
+
+        if uId is not None:
+            obj = Article.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        if uniqueId is not None:
+            obj = Article.objects.get(uniqueId=uniqueId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
         if id is not None:
             obj = Article.objects.get(pk=id)
             obj.total_view = obj.total_view + 1

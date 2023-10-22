@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'advertisement',
     'article',
     'categories',
-    'homepage',
     'news',
     'reporter',
     'webInfo',
@@ -68,11 +67,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
-
+TEMPLATES_DIRS = os.path.join(BASE_DIR,'templates')
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIRS],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,20 +89,27 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
-# for railway
+# Database Sqlite
 DATABASES = {
     'default': {
-        'ENGINE': os.environ['PGENGINE'],
-        'URL': os.environ['DATABASE_URL'],
-        'NAME': os.environ['PGDATABASE'],
-        'USER': os.environ['PGUSER'],
-        'PASSWORD': os.environ['PGPASSWORD'],
-        'HOST': os.environ['PGHOST'],
-        'PORT': os.environ['PGPORT'],
-       
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'udayan.db',
     }
 }
+
+# # for railway
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.environ['PGENGINE'],
+#         'URL': os.environ['DATABASE_URL'],
+#         'NAME': os.environ['PGDATABASE'],
+#         'USER': os.environ['PGUSER'],
+#         'PASSWORD': os.environ['PGPASSWORD'],
+#         'HOST': os.environ['PGHOST'],
+#         'PORT': os.environ['PGPORT'],
+       
+#     }
+# }
 
 
 if DEBUG: 

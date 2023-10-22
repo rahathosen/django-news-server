@@ -9,20 +9,16 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # For GraphQL
 from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
-from homepage.views import index
 from backend.sitemap import sitemapUrl
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('news/', include('news.urls')),
+    path('', include('news.urls')),
     path('gql/', csrf_exempt(GraphQLView.as_view(graphiql=True)))   
 ]
 urlpatterns += sitemapUrl
 urlpatterns += staticfiles_urlpatterns()
 if settings.DEBUG:
-    urlpatterns += [
-        path('', index),
-    ]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

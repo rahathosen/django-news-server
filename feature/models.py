@@ -22,7 +22,7 @@ YESNO = (
 
 class Feature(models.Model):
     uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Feature Name in English without Space')
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, blank=False, null=False, verbose_name='Feature Title')
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Feature/',blank=True, null=True)
@@ -40,24 +40,16 @@ class Feature(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        if self.image:
-            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
-                pass
-            else:
-                img = Image.open(self.image)
-                output = BytesIO()
-                img = img.convert('RGB')
-                img.save(output, format='WEBP', quality=95, subsampling=0)
-                output.seek(0)
-                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-                super().save(*args, **kwargs)
+        if self.uniqueId:
+            self.uniqueId = self.uniqueId.replace(" ", "-")
+        super().save(*args, **kwargs)
+        
 
 class FeatureCategory(models.Model):
     uniqueId = models.CharField( unique=True, max_length=20, blank=False, null=False, verbose_name='Category Name in English without Space')
     feature = models.ForeignKey(Feature, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature')
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, blank=False, null=False, verbose_name='Feature Category Title')
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
-    details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Feature/',blank=True, null=True)
     serial = models.PositiveIntegerField(default=0,blank=True)
     total_view = models.PositiveIntegerField(default=0)
@@ -71,26 +63,15 @@ class FeatureCategory(models.Model):
         return self.title + self.feature.title
     
     def save(self, *args, **kwargs):
-        if self.image:
-            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
-                pass
-            else:
-                img = Image.open(self.image)
-                output = BytesIO()
-                img = img.convert('RGB')
-                img.save(output, format='WEBP', quality=95, subsampling=0)
-                output.seek(0)
-                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-                super().save(*args, **kwargs)
+        if self.uniqueId:
+            self.uniqueId = self.uniqueId.replace(" ", "-")
+        super().save(*args, **kwargs)
+        
 
 class FeaturePost(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100,  blank=True, null=True)
     feature = models.ForeignKey(Feature, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature')
     category = models.ForeignKey(FeatureCategory, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Feature Category')
-    title = models.CharField(max_length=200,  blank=True, null=True, verbose_name='Title')
-    description = models.CharField(max_length=500, blank=True, null=True, verbose_name='Description')
-    details = RichTextField(blank=True, null=True, verbose_name='Details')
-    related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggation')
     continent = models.ForeignKey(Continent, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Continent')
     country = models.ForeignKey(Country, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Country')
     division = models.ForeignKey(Division, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Division')
@@ -102,11 +83,15 @@ class FeaturePost(models.Model):
     union = models.ForeignKey(Union, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Union')
     zip_code = models.ForeignKey(ZipPostalCode, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null= True, verbose_name='Zip Code')
     turisum_spot = models.ForeignKey(TurisumSpot, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
-    tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
+    title = models.CharField(max_length=200, blank=True, null=True, verbose_name='Title')
+    description = models.CharField(max_length=500, blank=True, null=True, verbose_name='Description')
+    details = RichTextField(blank=True, null=True, verbose_name='Details')
+    related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggation')
     image = models.ImageField(blank=True, null=True, upload_to='Post/images/webp',max_length=500, verbose_name='Image')
     imageSource = models.CharField(max_length=100, blank=True, null=True, verbose_name='Image Source')
     videoLink = models.CharField(max_length=200,null=True,blank=True, verbose_name='Video Link')
     videoSource = models.CharField(max_length=100, blank=True, null=True, verbose_name='Video Source')
+    tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     reported_by = models.ForeignKey(Reporter, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     written_by = models.ForeignKey(ArticleWritter, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Written By')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
@@ -124,19 +109,8 @@ class FeaturePost(models.Model):
         return self.title + ' - ' + str(self.category.title) + ' - ' + str(self.feature.title)
     
     def save(self, *args, **kwargs):
-        if self.image:
-            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
-                pass
-            else:
-                img = Image.open(self.image)
-                output = BytesIO()
-                img = img.convert('RGB')
-                img.save(output, format='WEBP', quality=95, subsampling=0)
-                output.seek(0)
-                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'images/webp', output.read(), None)
-                super().save(*args, **kwargs)
-    
-        if self.uniqueId == " " or self.uniqueId == "" or self.uniqueId == None:
-            self.uniqueId = self.feature.uniqueId+self.category.uniqueId+''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))
-            return super().save(*args, **kwargs)
+        if self.uniqueId:
+            self.uniqueId = self.uniqueId.replace(" ", "-")
+        super().save(*args, **kwargs)
+        
     

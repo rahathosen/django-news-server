@@ -60,21 +60,21 @@ class Post(models.Model):
         return f"{self.title} - {self.category.title} - {self.subcategory.title}"
     
     def save(self, *args, **kwargs):
-        if self.image:
-            if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
-                pass
-            else:
-                img = Image.open(self.image)
-                output = BytesIO()
-                img = img.convert('RGB')
-                img.save(output, format='WEBP', quality=95, subsampling=0)
-                output.seek(0)
-                self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'Post/images/webp', output.read(), None)
-                super(Post, self).save(*args, **kwargs)
+        # if self.image:
+        #     if self.image.name.endswith('.webp') or self.image.url.endswith('.webp'):
+        #         pass
+        #     else:
+        #         img = Image.open(self.image)
+        #         output = BytesIO()
+        #         img = img.convert('RGB')
+        #         img.save(output, format='WEBP', quality=95, subsampling=0)
+        #         output.seek(0)
+        #         self.image = InMemoryUploadedFile(output, 'ImageField', f"{self.image.name.split('.')[0]}.webp", 'Post/images/webp', output.read(), None)
+        #         super(Post, self).save(*args, **kwargs)
         
         if not self.uniqueId or not self.uniqueId.strip():
             uid = f"{self.country.uniqueId}{self.category.uniqueId}{self.subcategory.uniqueId}{''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))}"
-            self.uniqueId = slugify(uid)
+            self.uniqueId = slugify(uid).replace("-", "")
 
         super(Post, self).save(*args, **kwargs)
 
