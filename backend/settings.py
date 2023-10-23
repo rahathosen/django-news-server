@@ -89,27 +89,27 @@ WSGI_APPLICATION = 'backend.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Database Sqlite
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'udayan.db',
-    }
-}
-
-# # for railway
+# # Database Sqlite
 # DATABASES = {
 #     'default': {
-#         'ENGINE': os.environ['PGENGINE'],
-#         'URL': os.environ['DATABASE_URL'],
-#         'NAME': os.environ['PGDATABASE'],
-#         'USER': os.environ['PGUSER'],
-#         'PASSWORD': os.environ['PGPASSWORD'],
-#         'HOST': os.environ['PGHOST'],
-#         'PORT': os.environ['PGPORT'],
-       
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'udayan.db',
 #     }
 # }
+
+# for railway
+DATABASES = {
+    'default': {
+        'ENGINE': os.environ['PGENGINE'],
+        'URL': os.environ['DATABASE_URL'],
+        'NAME': os.environ['PGDATABASE'],
+        'USER': os.environ['PGUSER'],
+        'PASSWORD': os.environ['PGPASSWORD'],
+        'HOST': os.environ['PGHOST'],
+        'PORT': os.environ['PGPORT'],
+       
+    }
+}
 
 
 if DEBUG: 

@@ -34,7 +34,7 @@ class Continent(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)      
+        super(Continent, self).save(*args, **kwargs)      
     
 class Country(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Country Name in English without Space')
@@ -60,7 +60,7 @@ class Country(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(Country, self).save(*args, **kwargs)
 
 class Division(models.Model):
     uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='Division Name')
@@ -82,7 +82,7 @@ class Division(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(Division, self).save(*args, **kwargs)
         
 class District(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='District Name in English without Space')
@@ -104,7 +104,7 @@ class District(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(District, self).save(*args, **kwargs)
         
 class CityCorporation(models.Model):
     uniqueId = models.CharField(unique=True,max_length=50, blank=False, null=False, verbose_name='City Corporation Name in English without Space')
@@ -127,7 +127,7 @@ class CityCorporation(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(CityCorporation, self).save(*args, **kwargs)
         
 class Upozila(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Upozila Name in English without Space')
@@ -149,7 +149,7 @@ class Upozila(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(Upozila, self).save(*args, **kwargs)
 
 class Pourosava(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Pourosava Name in English without Space')
@@ -171,7 +171,7 @@ class Pourosava(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(Pourosava, self).save(*args, **kwargs)
     
 class Thana(models.Model):
     uniqueId = models.CharField(unique= True, max_length=50, blank=False, null=False, verbose_name='Thana Name in English without Space')
@@ -194,7 +194,7 @@ class Thana(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(Thana, self).save(*args, **kwargs)
 
 class Union(models.Model):
     uniqueId = models.CharField(unique = True, max_length=50, blank=False, null=False, verbose_name='Union Name in English without Space')
@@ -216,7 +216,7 @@ class Union(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(Union, self).save(*args, **kwargs)
 
 class ZipPostalCode(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Zip Postal Code + Name in English without Space')
@@ -241,7 +241,7 @@ class ZipPostalCode(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(ZipPostalCode, self).save(*args, **kwargs)
     
 class TurisumSpot(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Tourist Spot Name in English without Space')
@@ -268,7 +268,7 @@ class TurisumSpot(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(TurisumSpot, self).save(*args, **kwargs)
         
 class NewsCategory(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Category Name in English without Space')
@@ -290,7 +290,7 @@ class NewsCategory(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(NewsCategory, self).save(*args, **kwargs)
   
 class NewsSubCategory(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Sub Category Name in English without Space')
@@ -313,7 +313,7 @@ class NewsSubCategory(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(NewsSubCategory, self).save(*args, **kwargs)
 
 class PostsTag(models.Model):
     uniqueId = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name='Tag Name in English without Space')
@@ -335,6 +335,6 @@ class PostsTag(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(PostsTag, self).save(*args, **kwargs)
 
 

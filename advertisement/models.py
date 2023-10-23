@@ -1,9 +1,6 @@
 from django.db import models
-from ckeditor.fields import RichTextField
 from django.utils.text import slugify
 from PIL import Image
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
 import random
 import string
 
@@ -85,10 +82,9 @@ class Advertisement(models.Model):
                 return self.title + " - " + str(self.add_company) + " - " + str(self.addBox)
 
     def save(self, *args, **kwargs):
-
-        if self.uniqueId or self.uniqueId is None:
-            uri = self.add_company.name + str(self.addBox.position) + str(self.addBox.size) + ''.join(random.choice(string.ascii_uppercase) for _ in range(3))
-            self.uniqueId = slugify(uri).replace("-", "")
-            super(Advertisement, self).save(*args, **kwargs)
+        if not self.uniqueId or not self.uniqueId.strip():
+            uid = f"{self.addBox.uniqueId}{self.add_company.uniqueId}{''.join(random.choice(string.digits) for _ in range(2))}"
+            self.uniqueId = slugify(uid).replace("-", "")
+        super(Advertisement).save(*args, **kwargs)
     
         

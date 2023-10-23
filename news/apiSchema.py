@@ -8,6 +8,17 @@ from article.models import *
 from webInfo.models import *
 from categories.apiSchema import *
 
+import os
+
+def remove_file_extension(image_url):
+    filename, file_extension = os.path.splitext(image_url)
+    if file_extension:
+        new = filename
+        return new
+    else:
+        return image_url
+
+ 
 class PostType(DjangoObjectType):
     class Meta:
         model = Post
@@ -61,24 +72,29 @@ class Query(graphene.ObjectType):
             obj = Post.objects.get(uniqueId=uId)
             obj.total_view = obj.total_view + 1
             obj.save()
+            obj.image.name = remove_file_extension(obj.image.name)
             return obj
         
         elif id is not None:
             obj = Post.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
+            obj.image.name = remove_file_extension(obj.image.name)
             return obj
         
         elif uniqueId is not None:
             obj = Post.objects.get(uniqueId=uniqueId)
             obj.total_view = obj.total_view + 1
             obj.save()
+            obj.image.name = remove_file_extension(obj.image.name)
             return obj
         
         elif pk is not None:
             obj = Post.objects.get(pk=pk)
             obj.total_view = obj.total_view + 1
             obj.save()
+            obj.image.name = remove_file_extension(obj.image.name)
+            
             return obj
         
         else:
@@ -86,7 +102,10 @@ class Query(graphene.ObjectType):
         
     
     def resolve_all_posts(self, info, **kwargs):
-        return Post.objects.all()
+        posts =  Post.objects.all()
+        for post in posts:
+            post.image.name = remove_file_extension(post.image.name)
+        return posts
     
     def resolve_today_posts(self, info, **kwargs):
         return Post.objects.filter(created_at__date=datetime.date.today())

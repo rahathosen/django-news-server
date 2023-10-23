@@ -2,9 +2,6 @@ from django.db import models
 from ckeditor.fields import RichTextField
 from PIL import Image
 from django.utils.text import slugify
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
 from reporter.models import Reporter
 from categories.models import PostsTag
 
@@ -38,7 +35,7 @@ class ArticleCategory(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super(ArticleWritter, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -87,12 +84,12 @@ class Article(models.Model):
         ordering = ["-created_at"]
         verbose_name_plural = 'Articles'
         verbose_name = 'Article'
-
-    def save(self, *args, **kwargs):
-        if not self.uniqueId:
-            uId = f"{self.category.uniqueId}{self.writter.uniqueId}{''.join(random.choice(string.ascii_letters) for _ in range(4))}"
-            self.uniqueId = slugify(uId).replace("-", "")
-            super(Article, self).save(*args, **kwargs)
-
+    
     def __str__(self):
         return f"{self.title} - {self.category.name} - {self.writter.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.uniqueId or not self.uniqueId.strip():
+            uid = f"{self.writter.uniqueId}{self.category.uniqueId}{''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))}"
+            self.uniqueId = slugify(uid).replace("-", "")
+        super(Article, self).save(*args, **kwargs)

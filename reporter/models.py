@@ -1,8 +1,6 @@
 from django.db import models
 from ckeditor.fields import RichTextField
 from PIL import Image
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
 
 class Reporter(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True, verbose_name= 'Reporter name in English without Space and comma')

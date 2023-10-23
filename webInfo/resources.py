@@ -147,11 +147,12 @@ class FeatureCategoryResource(resources.ModelResource):
 class FeaturePostResource(resources.ModelResource):
     class Meta:
         model = FeaturePost
-        fields = ('id', 'uniqueId', 'category', 'title', 'description', 'details',
-                  'related_post', 'continent', 'country',  'division', 
-                  'district',  'city_corporation',  'upozila',  'pourosava', 
-                  'thana', 'union', 'zip_code', 'turisum_spot', 'tag',
-                  'image', 'imageSource', 'videoLink', 'videoSource', 
+        fields = ('id', 'uniqueId', 'feature', 'category', 'continent', 
+                  'country',  'division', 'district', 'city_corporation',  
+                  'upozila',  'pourosava', 'thana', 'union', 'zip_code', 
+                  'turisum_spot', 'title', 'description', 'details',
+                  'related_post','image', 'imageSource', 'videoLink', 
+                  'videoSource', 'tag', 
                   'reported_by', 'written_by', 'created_at', 'updated_at',
                   'status', 'editor_reviewed', 'total_view'
                   )

@@ -2,9 +2,6 @@ from django.db import models
 from ckeditor.fields import RichTextField
 from django.utils.text import slugify
 from PIL import Image
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
 from reporter.models import Reporter
 from article.models import ArticleWritter
 from categories.models import *
@@ -42,7 +39,7 @@ class Feature(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(Feature, self).save(*args, **kwargs)
         
 
 class FeatureCategory(models.Model):
@@ -65,7 +62,7 @@ class FeatureCategory(models.Model):
     def save(self, *args, **kwargs):
         if self.uniqueId:
             self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        super(FeatureCategory, self).save(*args, **kwargs)
         
 
 class FeaturePost(models.Model):
@@ -83,7 +80,7 @@ class FeaturePost(models.Model):
     union = models.ForeignKey(Union, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Union')
     zip_code = models.ForeignKey(ZipPostalCode, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null= True, verbose_name='Zip Code')
     turisum_spot = models.ForeignKey(TurisumSpot, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Turisum Spot')
-    title = models.CharField(max_length=200, blank=True, null=True, verbose_name='Title')
+    title = models.CharField(max_length=200, blank=False, null=False, verbose_name='Title')
     description = models.CharField(max_length=500, blank=True, null=True, verbose_name='Description')
     details = RichTextField(blank=True, null=True, verbose_name='Details')
     related_post = models.ManyToManyField('self', blank=True, verbose_name='Related Post Suggation')
@@ -106,11 +103,12 @@ class FeaturePost(models.Model):
         verbose_name = 'Feature Post'
 
     def __str__(self):
-        return self.title + ' - ' + str(self.category.title) + ' - ' + str(self.feature.title)
+        return self.title 
     
     def save(self, *args, **kwargs):
-        if self.uniqueId:
-            self.uniqueId = self.uniqueId.replace(" ", "-")
-        super().save(*args, **kwargs)
+        if not self.uniqueId or not self.uniqueId.strip():
+            uid = f"{self.feature.uniqueId}{self.category.uniqueId}{''.join(random.choice(string.ascii_letters + string.digits) for _ in range(3))}"
+            self.uniqueId = slugify(uid).replace("-", "")
+        super(FeaturePost, self).save(*args, **kwargs)
         
     
