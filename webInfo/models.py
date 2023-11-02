@@ -60,12 +60,13 @@ class WebsiteInfo(models.Model):
         return self.title
         
 class Navigation(models.Model):
-    news = models.ManyToManyField(Continent, blank=True, verbose_name='In Nav News')
-    news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
-    news3 = models.ManyToManyField(Division, blank=True, verbose_name='In Nav News')
-    news4 = models.ManyToManyField(District, blank=True, verbose_name='In Nav News')
-    news5 = models.ManyToManyField(CityCorporation, blank=True, verbose_name='In Nav News')
-    news6 = models.ManyToManyField(TurisumSpot, blank=True, verbose_name='In Nav News')
+    # news = models.ManyToManyField(Continent, blank=True, verbose_name='In Nav News')
+    # news2 = models.ManyToManyField(Country, blank=True, verbose_name='In Nav News')
+    # news3 = models.ManyToManyField(Division, blank=True, verbose_name='In Nav News')
+    # news4 = models.ManyToManyField(District, blank=True, verbose_name='In Nav News')
+    # news5 = models.ManyToManyField(CityCorporation, blank=True, verbose_name='In Nav News')
+    # news6 = models.ManyToManyField(TurisumSpot, blank=True, verbose_name='In Nav News')
+    # openion = models.ManyToManyField(ArticleCategory, blank=True, verbose_name='In Nav Openion')
     categories = models.ManyToManyField(NewsCategory, blank=False, verbose_name='In Nav Categories(Do not select 8 more)')
     feature = models.ManyToManyField(Feature, blank=True, verbose_name='In News feature')
     updated_at = models.DateTimeField(auto_now=True)

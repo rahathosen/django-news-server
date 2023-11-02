@@ -17,7 +17,7 @@ YESNO = (
 )
 
 class Post(models.Model):
-    uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)
+    uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True, verbose_name= 'This unique Id will be auto generate')
     reported_by = models.ForeignKey(Reporter, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     category = models.ForeignKey(NewsCategory, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Category')
     subcategory = models.ForeignKey(NewsSubCategory, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Sub Category')
@@ -44,7 +44,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
     status = models.IntegerField(choices=STATUS, default=0, verbose_name='Status')
-    editor_reviewed = models.IntegerField(choices=YESNO, default=0, verbose_name='Editor Reviewed')
+    editor_reviewed = models.IntegerField(choices=YESNO, default=0, verbose_name='Editor Review')
     total_view = models.PositiveIntegerField(default=0, verbose_name='Total View (*Do not edit)')
 
     class Meta:

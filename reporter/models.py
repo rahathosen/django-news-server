@@ -11,6 +11,7 @@ class Reporter(models.Model):
     address = models.CharField(max_length=200,blank=True, null=True)
     image = models.ImageField(default="", blank=True, null=True)
     details = RichTextField(blank=True, null=True)
+    status = models.CharField(max_length=100,blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
     total_view = models.PositiveIntegerField(default=0)

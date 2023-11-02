@@ -18,11 +18,12 @@ YESNO = (
 )
 
 class Feature(models.Model):
-    uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Feature Name in English without Space')
+    uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Name in English without Space')
     title = models.CharField(max_length=50, blank=False, null=False, verbose_name='Feature Title')
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Feature/',blank=True, null=True)
+    status = models.IntegerField(choices=STATUS, default = 0)
     serial = models.PositiveIntegerField(default=0,blank=True)
     total_view = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -48,6 +49,7 @@ class FeatureCategory(models.Model):
     title = models.CharField(max_length=50, blank=False, null=False, verbose_name='Feature Category Title')
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Feature/',blank=True, null=True)
+    status = models.IntegerField(choices=STATUS, default = 0)
     serial = models.PositiveIntegerField(default=0,blank=True)
     total_view = models.PositiveIntegerField(default=0)
     

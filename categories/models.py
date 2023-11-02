@@ -321,6 +321,7 @@ class PostsTag(models.Model):
     sortDetails = models.CharField(max_length=200, blank=True, null=True)
     details = RichTextField(blank=True, null=True)
     image = models.ImageField(upload_to='News/Categories/Tags/',blank=True, null=True)
+    status = models.IntegerField(choices=STATUS, default = 1)
     serial = models.PositiveIntegerField(default=0,blank=True)
     total_view = models.PositiveIntegerField(default=0)
 

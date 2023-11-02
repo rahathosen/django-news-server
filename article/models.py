@@ -21,14 +21,15 @@ YESNO = (
 # Article section
 class ArticleCategory(models.Model):
     uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Category name in English without Space and comma')
-    name = models.CharField(max_length=100, blank=False, null=False)
+    title = models.CharField(max_length=100, blank=False, null=False)
     details = models.TextField(default="", blank=True, null=True)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Category/', max_length=500)
+    status = models.IntegerField(choices=STATUS, default=0)
     serial = models.PositiveBigIntegerField(default=0, blank=True, null=True)
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["total_view"]
         verbose_name_plural = 'Article Categories'
         verbose_name = 'Article Category'
 
@@ -38,7 +39,7 @@ class ArticleCategory(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 
@@ -47,6 +48,7 @@ class ArticleWritter(models.Model):
     name = models.CharField(max_length=100, blank= False, null=False)
     image = models.ImageField(blank=True, null=True, upload_to='Article/Writer/', max_length=500)
     details = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=100,blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     total_view = models.PositiveIntegerField(default=0)
 
@@ -74,8 +76,8 @@ class Article(models.Model):
     image_source = models.CharField(max_length=100, blank=True, null=True)
     tag = models.ManyToManyField(PostsTag, blank=True)
     related_article = models.ManyToManyField('self', blank=True)
-    status = models.IntegerField(choices=STATUS, default=1)
-    editor_reviewed = models.IntegerField(choices=YESNO, default=1)
+    status = models.IntegerField(choices=STATUS, default=0)
+    editor_reviewed = models.IntegerField(choices=YESNO, default=0)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
     total_view = models.PositiveIntegerField(default=0)
@@ -86,7 +88,7 @@ class Article(models.Model):
         verbose_name = 'Article'
     
     def __str__(self):
-        return f"{self.title} - {self.category.name} - {self.writter.name}"
+        return f"{self.title} - {self.category.title} - {self.writter.name}"
 
     def save(self, *args, **kwargs):
         if not self.uniqueId or not self.uniqueId.strip():
