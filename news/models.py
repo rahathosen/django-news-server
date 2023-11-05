@@ -45,6 +45,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
     status = models.IntegerField(choices=STATUS, default=0, verbose_name='Status')
     editor_reviewed = models.IntegerField(choices=YESNO, default=0, verbose_name='Editor Review')
+    is_highlight_on_section = models.IntegerField(choices=YESNO, default=0, verbose_name='Highlight on section')
     total_view = models.PositiveIntegerField(default=0, verbose_name='Total View (*Do not edit)')
 
     class Meta:

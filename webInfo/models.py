@@ -80,13 +80,13 @@ class Navigation(models.Model):
         return f"'Last updated' + ' - ' + {self.updated_at}"
 
 class HeadLine(models.Model):
-    headlines = models.ManyToManyField(Post, blank=True , verbose_name='Headlines')
+    headlines = models.ManyToManyField(Post, blank=True , verbose_name='Head lines')
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-updated_at"]
-        verbose_name_plural = 'Headlines'
-        verbose_name = 'Headline'
+        verbose_name_plural = 'Head lines'
+        verbose_name = 'Head line'
 
     def __str__(self):
         return f"'Last updated' + ' - ' + {self.updated_at}"
@@ -104,37 +104,36 @@ class BreakingNews(models.Model):
     def __str__(self):
         return f"'Last updated' + ' - ' + {self.updated_at}"
     
-class Cover(models.Model):
-    headNews = models.ForeignKey(Post, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, verbose_name='Head Line News')
+class HeadNews(models.Model):
+    headNews = models.ForeignKey(Post, on_delete=models.DO_NOTHING, default=1, blank=False, verbose_name='Head/Main News')
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-updated_at"]
-        verbose_name_plural = 'Cover'
-        verbose_name = 'Cover'
+        verbose_name_plural = 'Head/Main News'
+        verbose_name = 'Head/Main News'
+        
+    def __str__(self):
+        return f"'Last updated' + ' - ' + {self.updated_at}"
+    
+class HomeHighlightedNews(models.Model):
+    highlightedNews = models.ManyToManyField(Post, blank=False, verbose_name='Highlighted News')
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+        verbose_name_plural = 'Home Highlighted News'
+        verbose_name = 'Home Highlighte dNews'
         
     def __str__(self):
         return f"'Last updated' + ' - ' + {self.updated_at}"
 
     
 class SectionBox(models.Model):
+    serial = models.PositiveIntegerField(default=0, blank=False, verbose_name='Serial Number')
     background_color = models.CharField(max_length=10, blank=True, verbose_name='Background Color(Must be in Hexadecimal)')
-    image = models.ImageField(upload_to='sectionBox/images/webp',blank=True, null=True)
-    title = models.CharField(max_length=50, blank=False)
-    details = models.TextField(blank=True, null=True)
-    heighlighted = models.ForeignKey(Post, to_field= 'uniqueId', on_delete=models.DO_NOTHING, blank=False, verbose_name='Heighlighted News')
-    items = models.ManyToManyField(NewsCategory, blank=True)
-    items2 = models.ManyToManyField(NewsSubCategory, blank=True)
-    items3 = models.ManyToManyField(PostsTag, blank=True)
-    items4 = models.ManyToManyField(Continent, blank=True)
-    items5 = models.ManyToManyField(Country, blank=True)
-    items6 = models.ManyToManyField(Division, blank=True)
-    items7 = models.ManyToManyField(District, blank=True)
-    items8 = models.ManyToManyField(CityCorporation, blank=True)
-    items9 = models.ManyToManyField(ArticleCategory, blank=True)
-    items10 = models.ManyToManyField(ArticleWritter, blank=True)
-    adbox_top = models.ForeignKey(Advertisement, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, related_name='adbox_top')
-    serial = models.PositiveIntegerField(default=0, blank=True)
+    category = models.ForeignKey(NewsCategory, default=1, on_delete=models.DO_NOTHING, blank=False)
+    image = models.ImageField(upload_to='sectionBox/images/webp',blank=True, null=True)   
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -144,7 +143,7 @@ class SectionBox(models.Model):
         verbose_name = 'Section Box'
 
     def __str__(self):
-        return f"{self.title + '-' + str(self.updated_at)}"
+        return f"{self.category.title + '-' + str(self.updated_at)}"
 
 class Poll(models.Model):
     uniqueId = models.CharField(unique=True, max_length=100, blank=True, null=True)

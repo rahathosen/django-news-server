@@ -9,30 +9,20 @@ class WebsiteInfoAdmin(ImportExportModelAdmin):
 class NavigationAdmin(ImportExportModelAdmin):
     resource_class = NavMenuResource
 
-class HeadLineAdmin(ImportExportModelAdmin):
-    resource_class = HeadLineResource
-
-class BreakingNewsAdmin(ImportExportModelAdmin):
-    resource_class = BreakingNewsResource
-
-class CoverAdmin(ImportExportModelAdmin):
-    resource_class = CoverResource
-
-class SectionBoxAdmin(ImportExportModelAdmin):
-    resource_class = SectionResource
-
 class PollAdmin(ImportExportModelAdmin):
     resource_class = PollResource
-
 
 # Register your models here.
 admin.site.register(WebsiteInfo, WebsiteInfoAdmin)
 admin.site.register(Navigation, NavigationAdmin)
-admin.site.register(HeadLine, HeadLineAdmin)
-admin.site.register(BreakingNews, BreakingNewsAdmin)
-admin.site.register(Cover, CoverAdmin)
-admin.site.register(SectionBox, SectionBoxAdmin)
 admin.site.register(Poll, PollAdmin)
+admin.site.register(HeadLine)
+admin.site.register(BreakingNews)
+admin.site.register(HeadNews)
+admin.site.register(HomeHighlightedNews)
+admin.site.register(SectionBox)
+
+
 
 
 

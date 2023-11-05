@@ -192,32 +192,8 @@ class WebsiteInfoResource(resources.ModelResource):
 class NavMenuResource(resources.ModelResource):
     class Meta:
         model = Navigation
-        fields = ('id', 'news', 'news2', 'news3', 'news4', 'news5', 'news6',
-                  'categories', 'feature', 'updated_at')
+        fields = ('id', 'categories', 'feature', 'updated_at')
 
-class SectionResource(resources.ModelResource):
-    class Meta:
-        model = SectionBox
-        fields = ('id', 'uniqueId', 'background_color', 'image',
-                  'title', 'details', 'heighlighted', 'items', 
-                  'items2', 'items3', 'items4', 'items5', 'items6',
-                  'items7', 'items8', 'items9', 'items10', 'adbox_top',
-                  'created_at', 'updated_at')
-
-class HeadLineResource(resources.ModelResource):
-    class Meta:
-        model = HeadLine
-        fields = ('id', 'headlines', 'updated_at')
-
-class BreakingNewsResource(resources.ModelResource):
-    class Meta:
-        model = BreakingNews
-        fields = ('id', 'items', 'updated_at', 'end_at')
-
-class CoverResource(resources.ModelResource):
-    class Meta:
-        model = Cover
-        fields = ('id', 'headNews', 'updated_at')
 
 class PollResource(resources.ModelResource):
     class Meta:

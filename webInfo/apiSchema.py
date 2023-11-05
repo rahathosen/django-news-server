@@ -32,10 +32,20 @@ class BreakingNewsType(DjangoObjectType):
         model = BreakingNews
         fields = "__all__"
 
-class CoverType(DjangoObjectType):
+class HeadNewsType(DjangoObjectType):
     class Meta:
-        model = Cover
-        fields = "__all__"    
+        model = HeadNews
+        fields = "__all__"
+
+class HomeHighlightedNewsType(DjangoObjectType):
+    class Meta:
+        model = HomeHighlightedNews
+        fields = "__all__" 
+
+class SectionBoxType(DjangoObjectType):
+    class Meta:
+        model = SectionBox
+        fields = "__all__"
 
 class UpdatePoll(graphene.Mutation):
     class Arguments:
@@ -72,31 +82,42 @@ class UpdatePoll(graphene.Mutation):
 class Query(graphene.ObjectType):
     websiteInfo = graphene.Field(WebsiteInfoType)
     navigation = graphene.Field(NavigationType)
-    headLines = graphene.Field(HeadLineType)
+    HeadLine = graphene.Field(HeadLineType)
     breakingNews = graphene.Field(BreakingNewsType)
-    cover = graphene.Field(CoverType)
+    HeadNews = graphene.Field(HeadNewsType)
+    HomeHighlightedNews = graphene.Field(HomeHighlightedNewsType)
+    SectionBox = graphene.Field(SectionBoxType)    
     
     poll = graphene.Field(PollType, id=graphene.Int())
     all_poll = graphene.List(PollType)
-
     
     def resolve_websiteInfo(self, info, **kwargs):
         obj = WebsiteInfo.objects.last()
         return obj
     
-    def resolve_headLines(self, info, **kwargs):
-        obj = HeadLine.objects.last()
-        return obj
-
     def resolve_navigation(self, info, **kwargs):
         return Navigation.objects.last()
+        
+    def resolve_HeadLine(self, info, **kwargs):
+        obj = HeadLine.objects.last()
+        return obj
     
     def resolve_breakingNews(self, info, **kwargs):
         oj = BreakingNews.objects.last()
         return oj
     
-    def resolve_cover(self, info, **kwargs):
-        return Cover.objects.last()
+    def resolve_HeadNews(self, info, **kwargs):
+        obj = HeadNews.objects.last()
+        return obj
+    
+    def resolve_HomeHighlightedNews(self, info, **kwargs):
+        obj = HomeHighlightedNews.objects.last()
+        return obj
+    
+    def resolve_SectionBox(self, info, **kwargs):
+        obj = SectionBox.objects.all()
+        return obj
+    
 
     def resolve_poll(self, info, **kwargs):
         id = kwargs.get('id')
