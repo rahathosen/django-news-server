@@ -29,19 +29,25 @@ class PostType(DjangoObjectType):
 class Query(graphene.ObjectType):
     post = graphene.Field(PostType, id=graphene.Int(), uId = graphene.String())
     all_posts = graphene.List(PostType, first = graphene.Int(), skip = graphene.Int())
-   
-    today_posts = graphene.List(PostType, first = graphene.Int(), skip = graphene.Int())
     last_week_popular_post  = graphene.List(PostType, first = graphene.Int(), skip = graphene.Int())
     last_month_popular_post = graphene.List(PostType, first = graphene.Int(), skip = graphene.Int())
-
+   
     post_by_category = graphene.List(PostType, categoryuId = graphene.String(), first= graphene.Int(), skip = graphene.Int())
+    last_10_post_by_category = graphene.List(PostType, categoryuId = graphene.String()) 
+    last_10_post_by_sub_category = graphene.List(PostType, subCategoryuId = graphene.String())
+    top_10_post_by_category_this_week = graphene.List(PostType, categoryuId = graphene.String())
+    top_10_post_by_sub_category_this_week = graphene.List(PostType, subCategoryuId = graphene.String())
 
-    last_8_post_by_category = graphene.List(PostType, category_id=graphene.Int(), category_uId = graphene.String()) 
-    last_8_post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int(), sub_category_uId = graphene.String())
+    post_by_sub_category = graphene.List(PostType, subCategoryuId = graphene.String(), first= graphene.Int(), skip = graphene.Int())
+    last_10_post_by_sub_category = graphene.List(PostType, subCategoryuId = graphene.String())
+    top_10_post_by_sub_category_this_week = graphene.List(PostType, subCategoryuId = graphene.String())
 
-    top_8_post_by_category_this_week = graphene.List(PostType, category_id=graphene.Int(), category_uId = graphene.String())
-    top_8_post_by_sub_category_this_week = graphene.List(PostType, sub_category_id=graphene.Int(), sub_category_uId = graphene.String())
+    post_by_tag = graphene.List(PostType, taguId = graphene.String(), first= graphene.Int(), skip = graphene.Int())
+    last_10_post_by_tag = graphene.List(PostType, taguId = graphene.String())
+    top_10_post_by_tag_this_week = graphene.List(PostType, taguId = graphene.String())
 
+    
+    
 
     
     def resolve_post(self, info, uId, id = None, **kwargs):
@@ -64,7 +70,6 @@ class Query(graphene.ObjectType):
         else:
             return None
         
-    
     def resolve_all_posts(self, info, first, skip, **kwargs):
         posts =  Post.objects.all().filter(status=1, editor_reviewed=1)
         for post in posts:
@@ -74,10 +79,9 @@ class Query(graphene.ObjectType):
         if first:
             posts = posts[:first]
         return posts
-    
-    def resolve_today_posts(self, info, first=None, skip=None, **kwargs):
-        today = datetime.date.today()
-        posts =  Post.objects.filter(created_at__date=today).filter(status=1, editor_reviewed=1)
+
+    def resolve_last_week_popular_post(self, info, first, skip, **kwargs):
+        posts = Post.objects.filter(status=1, editor_reviewed=1).filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=7)).order_by('-total_view')
         for post in posts:
             post.image.name = remove_file_extension(post.image.name)
         if skip:
@@ -86,6 +90,15 @@ class Query(graphene.ObjectType):
             posts = posts[:first]
         return posts
     
+    def resolve_last_month_popular_post(self, info, first, skip, **kwargs):
+        posts = Post.objects.filter(status=1, editor_reviewed=1).filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30)).order_by('-total_view')
+        for post in posts:
+            post.image.name = remove_file_extension(post.image.name)
+        if skip:
+            posts = posts[skip:]
+        if first:
+            posts = posts[:first]
+        return posts
 
     def resolve_post_by_category(self, info, categoryuId,  first=None, skip=None, **kwargs):
      
@@ -101,10 +114,98 @@ class Query(graphene.ObjectType):
         
         else:
             return None
+        
+    def resolve_last_10_post_by_category(self, info, categoryuId, **kwargs):
+        if categoryuId is not None:
+            posts = Post.objects.filter(category__uniqueId=categoryuId).filter(status=1, editor_reviewed=1)[:10]
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_last_10_post_by_sub_category(self, info, subCategoryuId, **kwargs):
+        if subCategoryuId is not None:
+            posts = Post.objects.filter(subCategory__uniqueId=subCategoryuId).filter(status=1, editor_reviewed=1)[:10]
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_top_10_post_by_category_this_week(self, info, categoryuId, **kwargs):
+        if categoryuId is not None:
+            posts = Post.objects.filter(category__uniqueId=categoryuId).filter(status=1, editor_reviewed=1).order_by('-total_view')[:10]
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_top_10_post_by_sub_category_this_week(self, info, subCategoryuId, **kwargs):
+        if subCategoryuId is not None:
+            posts = Post.objects.filter(subCategory__uniqueId=subCategoryuId).filter(status=1, editor_reviewed=1).order_by('-total_view')[:10]
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_post_by_sub_category(self, info, subCategoryuId,  first=None, skip=None, **kwargs):
+         
+        if subCategoryuId is not None:
+            posts = Post.objects.filter(subCategory__uniqueId=subCategoryuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_post_by_tag(self, info, taguId,  first=None, skip=None, **kwargs):
+            
+        if taguId is not None:
+            posts = Post.objects.filter(tag__uniqueId=taguId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+        
+    def resolve_last_10_post_by_tag(self, info, taguId, **kwargs):
+        if taguId is not None:
+            posts = Post.objects.filter(tag__uniqueId=taguId).filter(status=1, editor_reviewed=1)[:10]
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_top_10_post_by_tag_this_week(self, info, taguId, **kwargs):
+        if taguId is not None:
+            posts = Post.objects.filter(tag__uniqueId=taguId).filter(status=1, editor_reviewed=1).order_by('-total_view')[:10]
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            return posts
+        
+        else:
+            return None
 
 
-    
-    
     
 
 
