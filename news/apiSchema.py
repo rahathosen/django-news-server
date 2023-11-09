@@ -55,9 +55,7 @@ class Query(graphene.ObjectType):
     post_by_union = graphene.List(PostType, unionuId = graphene.String(), first= graphene.Int(), skip = graphene.Int())
     post_by_touristSpot = graphene.List(PostType, touristSpotuId = graphene.String(), first= graphene.Int(), skip = graphene.Int())
     post_by_zipCode = graphene.List(PostType, zipCodeuId = graphene.String(), first= graphene.Int(), skip = graphene.Int())
-
-    
-    
+      
 
     
     def resolve_post(self, info, uId, id = None, **kwargs):
@@ -214,8 +212,174 @@ class Query(graphene.ObjectType):
         else:
             return None
     
+    def resolve_post_by_continent(self, info, continentuId,  first=None, skip=None, **kwargs):
+            
+        if continentuId is not None:
+            posts = Post.objects.filter(continent__uniqueId=continentuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_post_by_country(self, info, countryuId,  first=None, skip=None, **kwargs):
+            
+        if countryuId is not None:
+            posts = Post.objects.filter(country__uniqueId=countryuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_post_by_division(self, info, divisionuId,  first=None, skip=None, **kwargs):
+            
+        if divisionuId is not None:
+            posts = Post.objects.filter(division__uniqueId=divisionuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+        
+    def resolve_post_by_district(self, info, districtuId,  first=None, skip=None, **kwargs):
+            
+        if districtuId is not None:
+            posts = Post.objects.filter(district__uniqueId=districtuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
 
+    def resolve_post_by_cityCorporation(self, info, cityuId,  first=None, skip=None, **kwargs):
+            
+        if cityuId is not None:
+            posts = Post.objects.filter(city__uniqueId=cityuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+        
+    def resolve_post_by_upozila(self, info, upozilauId,  first=None, skip=None, **kwargs):
+            
+        if upozilauId is not None:
+            posts = Post.objects.filter(upozila__uniqueId=upozilauId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+    
+    def resolve_post_by_pourosova(self, info, pourosovaId,  first=None, skip=None, **kwargs):
+                    
+        if pourosovaId is not None:
+            posts = Post.objects.filter(pourosova__uniqueId=pourosovaId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+                
+    def resolve_post_by_thana(self, info, thanauId,  first=None, skip=None, **kwargs):
+                        
+        if thanauId is not None:
+            posts = Post.objects.filter(thana__uniqueId=thanauId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        
+        else:
+            return None
+        
+    def resolve_post_by_union(self, info, unionuId,  first=None, skip=None, **kwargs):
+        
+        if unionuId is not None:
+            posts = Post.objects.filter(union__uniqueId=unionuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+    
+        else:
+            return None
 
+    def resolve_post_by_touristSpot(self, info, touristSpotuId,  first=None, skip=None, **kwargs):
+
+        if touristSpotuId is not None:
+            posts = Post.objects.filter(touristSpot__uniqueId=touristSpotuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
+        else:
+            return None
+        
+    def resolve_post_by_zipCode(self, info, zipCodeuId,  first=None, skip=None, **kwargs):
+
+        if zipCodeuId is not None:
+            posts = Post.objects.filter(zipCode__uniqueId=zipCodeuId).filter(status=1, editor_reviewed=1)
+            for post in posts:
+                post.image.name = remove_file_extension(post.image.name)
+            if skip:
+                posts = posts[skip:]
+            if first:
+                posts = posts[:first]
+            return posts
 
 
 class Mutation(graphene.ObjectType):
