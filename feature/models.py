@@ -93,6 +93,7 @@ class FeaturePost(models.Model):
     tag = models.ManyToManyField(PostsTag, blank=True, verbose_name='Tags')
     reported_by = models.ForeignKey(Reporter, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=False, null=False, verbose_name='Reporter')
     written_by = models.ForeignKey(ArticleWritter, to_field='uniqueId', on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='Written By')
+    is_highlight_on_section = models.IntegerField(choices=YESNO, default=0, verbose_name='Highlight on section')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name='Updated At')
     status = models.IntegerField(choices=STATUS, default = 0, verbose_name='Status')

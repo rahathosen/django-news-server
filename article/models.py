@@ -78,6 +78,7 @@ class Article(models.Model):
     related_article = models.ManyToManyField('self', blank=True)
     status = models.IntegerField(choices=STATUS, default=0)
     editor_reviewed = models.IntegerField(choices=YESNO, default=0)
+    is_highlight_on_section = models.IntegerField(choices=YESNO, default=0, verbose_name='Highlight on section')
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
     total_view = models.PositiveIntegerField(default=0)
