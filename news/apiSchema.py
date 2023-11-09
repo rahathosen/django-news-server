@@ -34,7 +34,7 @@ class Query(graphene.ObjectType):
     last_week_popular_post  = graphene.List(PostType)
     last_month_popular_post = graphene.List(PostType)
 
-    post_by_category = graphene.List(PostType, category_id=graphene.Int(), category_uId = graphene.String())
+    post_by_category = graphene.List(PostType, categoryuId = graphene.String(), first= graphene.Int(), skip = graphene.Int())
     post_by_sub_category = graphene.List(PostType, sub_category_id=graphene.Int(), sub_sucategory_uId = graphene.String())
     post_by_country = graphene.List(PostType, country_id=graphene.Int(), country_uId = graphene.String())
     post_by_division = graphene.List(PostType, division_id=graphene.Int(), division_uId = graphene.String())
@@ -121,33 +121,10 @@ class Query(graphene.ObjectType):
         return Post.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30)).filter(status=1, editor_reviewed=1)
     
 
-    def resolve_post_by_category(self, info, category_uId, category_id = None, first=None, skip=None, **kwargs):
-        category_id = kwargs.get('id')
-        pk = kwargs.get('pk')
-        category_uId = kwargs.get('uniqueId')
-
-        if category_uId is not None:
-            posts = Post.objects.filter(category__uniqueId=category_uId).filter(status=1, editor_reviewed=1)
-            for post in posts:
-                post.image.name = remove_file_extension(post.image.name)
-            if skip:
-                posts = posts[skip:]
-            if first:
-                posts = posts[:first]
-            return posts
-        
-        elif category_id is not None:
-            posts = Post.objects.filter(category_id=category_id).filter(status=1, editor_reviewed=1)
-            for post in posts:
-                post.image.name = remove_file_extension(post.image.name)
-            if skip:
-                posts = posts[skip:]
-            if first:
-                posts = posts[:first]
-            return posts
-        
-        elif pk is not None:
-            posts = Post.objects.filter(category_id=pk).filter(status=1, editor_reviewed=1)
+    def resolve_post_by_category(self, info, categoryuId,  first=None, skip=None, **kwargs):
+     
+        if categoryuId is not None:
+            posts = Post.objects.filter(category__uniqueId=categoryuId).filter(status=1, editor_reviewed=1)
             for post in posts:
                 post.image.name = remove_file_extension(post.image.name)
             if skip:
@@ -159,52 +136,13 @@ class Query(graphene.ObjectType):
         else:
             return None
 
-    def resolve_post_by_sub_category(self, info, sub_category_uId, sub_category_id = None, first=None, skip=None, **kwargs):
-        sub_category_id = kwargs.get('id')
-        pk = kwargs.get('pk')
-        sub_category_uId = kwargs.get('uniqueId')
-
-        if sub_category_uId is not None:
-            posts = Post.objects.filter(sub_category__uniqueId=sub_category_uId).filter(status=1, editor_reviewed=1)
-            for post in posts:
-                post.image.name = remove_file_extension(post.image.name)
-            if skip:
-                posts = posts[skip:]
-            if first:
-                posts = posts[:first]
-            return posts
-        
-        elif sub_category_id is not None:
-            posts = Post.objects.filter(sub_category_id=sub_category_id).filter(status=1, editor_reviewed=1)
-            for post in posts:
-                post.image.name = remove_file_extension(post.image.name)
-            if skip:
-                posts = posts[skip:]
-            if first:
-                posts = posts[:first]
-            return posts
-        
-        elif pk is not None:
-            posts = Post.objects.filter(sub_category_id=pk).filter(status=1, editor_reviewed=1)
-            for post in posts:
-                post.image.name = remove_file_extension(post.image.name)
-            if skip:
-                posts = posts[skip:]
-            if first:
-                posts = posts[:first]
-            return posts
-        
-        else:
-            return None
-        
-
 
     
     
     
 
 
-#
+
 
 class Mutation(graphene.ObjectType):
     pass

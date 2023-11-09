@@ -82,11 +82,11 @@ class UpdatePoll(graphene.Mutation):
 class Query(graphene.ObjectType):
     websiteInfo = graphene.Field(WebsiteInfoType)
     navigation = graphene.Field(NavigationType)
-    HeadLine = graphene.Field(HeadLineType)
+    headLine = graphene.Field(HeadLineType)
     breakingNews = graphene.Field(BreakingNewsType)
-    HeadNews = graphene.Field(HeadNewsType)
-    HomeHighlightedNews = graphene.Field(HomeHighlightedNewsType)
-    SectionBox = graphene.Field(SectionBoxType)    
+    headNews = graphene.Field(HeadNewsType)
+    homeHighlightedNews = graphene.Field(HomeHighlightedNewsType)
+    sectionBox = graphene.Field(SectionBoxType)    
     
     poll = graphene.Field(PollType, id=graphene.Int())
     all_poll = graphene.List(PollType)
