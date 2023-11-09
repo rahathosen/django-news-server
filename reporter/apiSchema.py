@@ -35,36 +35,3 @@ class Mutation(graphene.ObjectType):
     pass
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
-
-# Test Query
-
-# Reporter Query
-# query {
-#   reporters {
-#     id
-#     name
-#     email
-#     phone
-#     address
-#     created_at
-#     updated_at
-#     total_view
-#   }
-# }
-#
-
-# Reporters Query with pagination
-# query {
-#   reporters(first: 2, skip: 1) {
-#     id
-#     name
-#     email
-#     phone
-#     address
-#     created_at
-#     updated_at
-#     total_view
-#   }
-# }
-#
-

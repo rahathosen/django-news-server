@@ -21,11 +21,14 @@ class ArticleWritterType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     articles = graphene.List(ArticleType, first = graphene.Int(), skip = graphene.Int())
-    article = graphene.Field(ArticleType, id=graphene.Int(), uId=graphene.String())
+    article = graphene.Field(ArticleType, uId=graphene.String())
     article_categories = graphene.List(ArticleCategoryType, first = graphene.Int(), skip = graphene.Int())
-    article_category = graphene.Field(ArticleCategoryType, id=graphene.Int())
+    article_category = graphene.Field(ArticleCategoryType, categoryuId=graphene.String())
     article_writters = graphene.List(ArticleWritterType, first = graphene.Int(), skip = graphene.Int())
-    article_writter = graphene.Field(ArticleWritterType, id=graphene.Int())
+    article_writter = graphene.Field(ArticleWritterType, writteruId=graphene.String())
+
+    article_by_category = graphene.List(ArticleType, categoryuId=graphene.String())
+    article_by_writter = graphene.List(ArticleType, writteruId=graphene.String())
 
     today_articles = graphene.List(ArticleType)
     last_week_popular_article  = graphene.List(ArticleType)
@@ -39,7 +42,7 @@ class Query(graphene.ObjectType):
 
 
     def resolve_articles(self, info, first=None, skip=None, **kwargs):
-        articles = Article.objects.all()
+        articles = Article.objects.all().filter(status=1, editor_reviewed=1)
         if skip:
             articles = articles[skip:]
         if first:
@@ -48,28 +51,22 @@ class Query(graphene.ObjectType):
         return articles
     
     def resolve_article(self, info, uId, **kwargs):
-        id = kwargs.get('id')
         uniqueId = kwargs.get('uId')
 
         if uId is not None:
-            obj = Article.objects.get(uniqueId=uId)
+            obj = Article.objects.get(uniqueId=uId).filter(status=1, editor_reviewed=1)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
         if uniqueId is not None:
-            obj = Article.objects.get(uniqueId=uniqueId)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
-        if id is not None:
-            obj = Article.objects.get(pk=id)
+            obj = Article.objects.get(uniqueId=uniqueId).filter(status=1, editor_reviewed=1)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
         return None
     
     def resolve_article_categories(self, info, first=None, skip=None, **kwargs):
-        article_categories = ArticleCategory.objects.all()
+        article_categories = ArticleCategory.objects.all().filter(status=1)
         if skip:
             article_categories = article_categories[skip:]
         if first:
@@ -77,10 +74,9 @@ class Query(graphene.ObjectType):
 
         return article_categories
     
-    def resolve_article_category(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            obj = ArticleCategory.objects.get(pk=id)
+    def resolve_article_category(self, info, categoryuId, **kwargs):
+        if categoryuId is not None:
+            obj = ArticleCategory.objects.get(uniqueId=categoryuId).filter(status=1)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
@@ -95,231 +91,52 @@ class Query(graphene.ObjectType):
 
         return article_writters
     
-    def resolve_article_writter(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            obj = ArticleWritter.objects.get(pk=id)
+    def resolve_article_writter(self, writteruId, info, **kwargs):
+        if writteruId is not None:
+            obj = ArticleWritter.objects.get(uniqueId=writteruId)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
         return None
+
+    def resolve_article_by_category(self, info, categoryuId, **kwargs):
+        if categoryuId is not None:
+            obj = Article.objects.filter(category__uniqueId=categoryuId).filter(status=1, editor_reviewed=1)
+            # obj.total_view = obj.total_view + 1
+            # obj.save()
+            return obj
+        return None
+    
+    def resolve_article_by_writter(self, info, writteruId, **kwargs):
+        if writteruId is not None:
+            obj = Article.objects.filter(writter__uniqueId=writteruId).filter(status=1, editor_reviewed=1)
+            # obj.total_view = obj.total_view + 1
+            # obj.save()
+            return obj
+        return None
     
     def resolve_today_articles(self, info, **kwargs):
-        return Article.objects.filter(created_at__date=datetime.date.today()).order_by(total_view='DESC')
+        return Article.objects.filter(created_at__date=datetime.date.today()).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
     
     def resolve_last_week_popular_article(self, info, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=7)).order_by(total_view='DESC')
+        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=7)).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
     
     def resolve_last_month_popular_article(self, info, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30)).order_by(total_view='DESC')
+        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30)).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
     
     def resolve_popular_article_by_category_last_month(self, info, category_id, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30), category_id=category_id).order_by(total_view='DESC')
+        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30), category_id=category_id).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
     
     def resolve_popular_article_by_writter(self, info, writter_id, **kwargs):
-        return Article.objects.filter(writter_id=writter_id).order_by(total_view='DESC')
+        return Article.objects.filter(writter_id=writter_id).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
     
     def resolve_related_article_by_category_last_month(self, info, category_id, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30), category_id=category_id).order_by(total_view='DESC')[:10]
+        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30), category_id=category_id).filter(status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
     
     def resolve_related_article_by_writter_last_ten(self, info, writter_id, **kwargs):
-        return Article.objects.filter(writter_id=writter_id).order_by(total_view='DESC')[:10]
+        return Article.objects.filter(writter_id=writter_id).filter(status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
 
 class Mutation(graphene.ObjectType):
     pass   
     
 schema = graphene.Schema(query=Query, mutation=Mutation)
-
-# Test Query
-# Test article query
-# query {
-#   articles {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-
-#   article(id: 1) {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test article category query
-# query {
-#   articleCategories {
-#     id
-#     name
-#     totalView
-#     createdAt
-#   }
-
-#   articleCategory(id: 1) {
-#     id
-#     name
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test article writter query
-# query {
-#   articleWritters {
-#     id
-#     name
-#     totalView
-#     createdAt
-#   }
-
-#   articleWritter(id: 1) {
-#     id
-#     name
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test today article query
-# query {
-#   todayArticles {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test last week popular article query
-# query {
-#   lastWeekPopularArticle {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test last month popular article query
-# query {
-#   lastMonthPopularArticle {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test popular article by category last month query
-# query {
-#   popularArticleByCategoryLastMonth(categoryId: 1) {
-#     id    
-#     title
-#     category {
-#       id
-#       name    
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test popular article by writter query
-# query {
-#   popularArticleByWritter(writterId: 1) {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }   
-# } 
-
-# Test related article by category last month query
-# query {
-#   relatedArticleByCategoryLastMonth(categoryId: 1) {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-# }
-
-# Test related article by writter last ten query
-# query {
-#   relatedArticleByWritterLastTen(writterId: 1) {
-#     id
-#     title
-#     category {
-#       id
-#       name
-#     }
-#     writter {
-#       id
-#       name
-#     }
-#     totalView
-#     createdAt
-#   }
-# }
