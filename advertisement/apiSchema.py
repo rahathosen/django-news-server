@@ -20,11 +20,12 @@ class AdvertisementType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     ad_boxes = graphene.List(AdBoxType, first = graphene.Int(), skip = graphene.Int())
-    ad_box = graphene.Field(AdBoxType, id=graphene.Int())
+    ad_box = graphene.List(AdBoxType, uId=graphene.String())
     ad_companies = graphene.List(AdCompanyType, first = graphene.Int(), skip = graphene.Int())
-    ad_company = graphene.Field(AdCompanyType, id=graphene.Int())
+    ad_company = graphene.Field(AdCompanyType, uId=graphene.String())
     advertisements = graphene.List(AdvertisementType, first = graphene.Int(), skip = graphene.Int())
-    advertisement = graphene.Field(AdvertisementType, id=graphene.Int())
+    advertisement = graphene.Field(AdvertisementType, uId=graphene.String())
+    ads_by_box = graphene.Field(AdvertisementType, uId=graphene.String())
 
     def resolve_ad_boxes(self, info, first=None, skip=None, **kwargs):
         ad_boxes = AdBox.objects.all()
@@ -35,14 +36,16 @@ class Query(graphene.ObjectType):
 
         return ad_boxes
     
-    def resolve_ad_box(self, info, **kwargs):
-        id = kwargs.get('id')
-        if id is not None:
-            obj = AdBox.objects.get(pk=id)
+    def resolve_ad_box(self, uId, info, **kwargs):
+        
+        if uId is not None:
+            obj = AdBox.objects.get(uniqueId=uId)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
-        return None
+       
+        else:
+            return None
     
     def resolve_ad_companies(self, info, first=None, skip=None, **kwargs):
         ad_companies = AdCompany.objects.all()
@@ -53,14 +56,21 @@ class Query(graphene.ObjectType):
 
         return ad_companies
     
-    def resolve_ad_company(self, info, **kwargs):
+    def resolve_ad_company(self, uId, info, **kwargs):
         id = kwargs.get('id')
-        if id is not None:
+        
+        if uId is not None:
+            obj = AdCompany.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        elif id is not None:
             obj = AdCompany.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
-        return None
+        else:
+            return None
     
     def resolve_advertisements(self, info, first=None, skip=None, **kwargs):
         advertisements = Advertisement.objects.all()
@@ -71,14 +81,28 @@ class Query(graphene.ObjectType):
 
         return advertisements
     
-    def resolve_advertisement(self, info, **kwargs):
+    def resolve_advertisement(self, uId, info, **kwargs):
         id = kwargs.get('id')
-        if id is not None:
+
+        if uId is not None:
+            obj = Advertisement.objects.get(uniqueId=uId)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        elif id is not None:
             obj = Advertisement.objects.get(pk=id)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
-        return None
+        else:
+            return None
+        
+    def resolve_ads_by_box(self, uId, info, **kwargs):
+        if uId is not None:
+            obj = Advertisement.objects.get(addBox__uniqueId=uId)
+            return obj
+        else:
+            return None
     
 class Mutation(graphene.ObjectType):
     pass
