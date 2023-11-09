@@ -82,11 +82,11 @@ class UpdatePoll(graphene.Mutation):
 class Query(graphene.ObjectType):
     websiteInfo = graphene.Field(WebsiteInfoType)
     navigation = graphene.Field(NavigationType)
-    headLine = graphene.Field(HeadLineType)
+    headLine = graphene.List(HeadLineType)
     breakingNews = graphene.Field(BreakingNewsType)
-    headNews = graphene.Field(HeadNewsType)
+    mainNews = graphene.Field(HeadNewsType)
     homeHighlightedNews = graphene.Field(HomeHighlightedNewsType)
-    sectionBox = graphene.Field(SectionBoxType)    
+    sectionBox = graphene.List(SectionBoxType)   
     
     poll = graphene.Field(PollType, id=graphene.Int())
     all_poll = graphene.List(PollType)
@@ -98,23 +98,23 @@ class Query(graphene.ObjectType):
     def resolve_navigation(self, info, **kwargs):
         return Navigation.objects.last()
         
-    def resolve_HeadLine(self, info, **kwargs):
-        obj = HeadLine.objects.last()
+    def resolve_headLine(self, info, **kwargs):
+        obj = HeadLine.objects.all()
         return obj
     
     def resolve_breakingNews(self, info, **kwargs):
         oj = BreakingNews.objects.last()
         return oj
     
-    def resolve_HeadNews(self, info, **kwargs):
+    def resolve_mainNews(self, info, **kwargs):
         obj = HeadNews.objects.last()
         return obj
     
-    def resolve_HomeHighlightedNews(self, info, **kwargs):
+    def resolve_homeHighlightedNews(self, info, **kwargs):
         obj = HomeHighlightedNews.objects.last()
         return obj
     
-    def resolve_SectionBox(self, info, **kwargs):
+    def resolve_sectionBox(self, info, **kwargs):
         obj = SectionBox.objects.all()
         return obj
     

@@ -138,7 +138,7 @@ class SectionBox(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-updated_at"]
+        ordering = ["serial"]
         verbose_name_plural = 'Section Boxs'
         verbose_name = 'Section Box'
 

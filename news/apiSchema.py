@@ -9,7 +9,6 @@ from webInfo.models import *
 from categories.apiSchema import *
 
 import os
-
 def remove_file_extension(image_url):
     filename, file_extension = os.path.splitext(image_url)
     if file_extension:
@@ -18,13 +17,10 @@ def remove_file_extension(image_url):
     else:
         return image_url
 
- 
 class PostType(DjangoObjectType):
     class Meta:
         model = Post
-        fields = "__all__"
-        
-
+        fields = "__all__"       
 
 class Query(graphene.ObjectType):
     post = graphene.Field(PostType, id=graphene.Int(), uId = graphene.String())
