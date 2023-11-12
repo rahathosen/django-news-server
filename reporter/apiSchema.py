@@ -11,7 +11,7 @@ class ReporterType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     reporters = graphene.List(ReporterType, first = graphene.Int(), skip = graphene.Int())
-    reporter = graphene.Field(ReporterType, id=graphene.Int())
+    reporter = graphene.Field(ReporterType, uId=graphene.String())
 
     def resolve_reporters(self, info, first=None, skip=None, **kwargs):
         reporters = Reporter.objects.all()
@@ -22,14 +22,18 @@ class Query(graphene.ObjectType):
 
         return reporters
     
-    def resolve_reporter(self, info, **kwargs):
+    def resolve_reporter(self, info, uId, **kwargs):
         id = kwargs.get('id')
-        if id is not None:
-            obj = Reporter.objects.get(pk=id)
-            obj.total_view = obj.total_view + 1
-            obj.save()
+        if uId is not None:
+            obj = Reporter.objects.get(uniqueId=uId)
             return obj
-        return None
+        # elif id is not None:
+        #     obj = Reporter.objects.get(pk=id)
+        #     obj.total_view = obj.total_view + 1
+        #     obj.save()
+        #     return obj
+        else:
+            return None
     
 class Mutation(graphene.ObjectType):
     pass

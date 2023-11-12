@@ -186,7 +186,7 @@ class Query(graphene.ObjectType):
     def resolve_post_by_reporter(self, info, reporteruId,  first=None, skip=None, **kwargs):
             
         if reporteruId is not None:
-            posts = Post.objects.filter(reporter__uniqueId=reporteruId).filter(status=1, editor_reviewed=1)
+            posts = Post.objects.filter(reported_by__uniqueId=reporteruId).filter(status=1, editor_reviewed=1)
             for post in posts:
                 post.image.name = remove_file_extension(post.image.name)
             if skip:
