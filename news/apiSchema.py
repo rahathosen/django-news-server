@@ -144,7 +144,7 @@ class Query(graphene.ObjectType):
     def resolve_post_by_sub_category(self, info, subCategoryuId,  first=None, skip=None, **kwargs):
          
         if subCategoryuId is not None:
-            posts = Post.objects.filter(subCategory__uniqueId=subCategoryuId).filter(status=1, editor_reviewed=1)
+            posts = Post.objects.filter(subcategory__uniqueId=subCategoryuId).filter(status=1, editor_reviewed=1)
             for post in posts:
                 post.image.name = remove_file_extension(post.image.name)
             if skip:
