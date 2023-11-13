@@ -43,7 +43,13 @@ class Query(graphene.ObjectType):
         return FeaturePost.objects.all().filter(status=1)
     
     def resolve_feature_post(self, info, featurePostuId, **kwargs):
-        return FeaturePost.objects.get(uniqueId=featurePostuId, status=1)
+        if featurePostuId is not None:
+            obj = FeaturePost.objects.get(uniqueId=featurePostuId, status=1)
+            obj.total_view = obj.total_view + 1
+            obj.save()
+            return obj
+        else:
+            return None
     
 
     

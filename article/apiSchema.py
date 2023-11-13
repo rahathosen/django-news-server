@@ -20,8 +20,8 @@ class ArticleWritterType(DjangoObjectType):
         fields = "__all__"
 
 class Query(graphene.ObjectType):
-    articles = graphene.List(ArticleType, first = graphene.Int(), skip = graphene.Int())
-    article = graphene.Field(ArticleType, uId=graphene.String())
+    articles_posts = graphene.List(ArticleType, first = graphene.Int(), skip = graphene.Int())
+    article_post = graphene.Field(ArticleType, uId=graphene.String())
     article_categories = graphene.List(ArticleCategoryType, first = graphene.Int(), skip = graphene.Int())
     article_category = graphene.Field(ArticleCategoryType, categoryuId=graphene.String())
     article_writters = graphene.List(ArticleWritterType, first = graphene.Int(), skip = graphene.Int())
@@ -41,7 +41,7 @@ class Query(graphene.ObjectType):
     related_article_by_writter_last_ten = graphene.List(ArticleType, writter_id=graphene.Int())
 
 
-    def resolve_articles(self, info, first=None, skip=None, **kwargs):
+    def resolve_articles_posts(self, info, first=None, skip=None, **kwargs):
         articles = Article.objects.all().filter(status=1, editor_reviewed=1)
         if skip:
             articles = articles[skip:]
@@ -50,20 +50,15 @@ class Query(graphene.ObjectType):
 
         return articles
     
-    def resolve_article(self, info, uId, **kwargs):
-        uniqueId = kwargs.get('uId')
+    def resolve_article_post(self, info, uId, **kwargs):
 
         if uId is not None:
-            obj = Article.objects.get(uniqueId=uId).filter(status=1, editor_reviewed=1)
+            obj = Article.objects.get(uniqueId=uId, status=1, editor_reviewed=1)
             obj.total_view = obj.total_view + 1
             obj.save()
             return obj
-        if uniqueId is not None:
-            obj = Article.objects.get(uniqueId=uniqueId).filter(status=1, editor_reviewed=1)
-            obj.total_view = obj.total_view + 1
-            obj.save()
-            return obj
-        return None
+        else:
+            return None
     
     def resolve_article_categories(self, info, first=None, skip=None, **kwargs):
         article_categories = ArticleCategory.objects.all().filter(status=1)
