@@ -93,6 +93,6 @@ class Article(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.uniqueId or not self.uniqueId.strip():
-            uid = f"{self.writter.uniqueId}{self.category.uniqueId}{''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))}"
+            uid = f"{self.writter.uniqueId}{self.category.uniqueId}{''.join(random.choice(string.digits) for _ in range(5))}"
             self.uniqueId = slugify(uid).replace("-", "")
         super(Article, self).save(*args, **kwargs)

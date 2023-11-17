@@ -83,7 +83,7 @@ class Advertisement(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.uniqueId or not self.uniqueId.strip():
-            uid = f"{self.addBox.uniqueId}{self.add_company.uniqueId}{''.join(random.choice(string.digits) for _ in range(2))}"
+            uid = f"{self.addBox.uniqueId}{self.add_company.uniqueId}{''.join(random.choice(string.digits) for _ in range(3))}"
             self.uniqueId = slugify(uid).replace("-", "")
         super(Advertisement, self).save(*args, **kwargs)
     

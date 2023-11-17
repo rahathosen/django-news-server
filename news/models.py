@@ -58,6 +58,6 @@ class Post(models.Model):
         
     def save(self, *args, **kwargs):
         if not self.uniqueId or not self.uniqueId.strip():
-            uid = f"{self.country.uniqueId}{self.category.uniqueId}{self.subcategory.uniqueId}{''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))}"
+            uid = f"{self.country.uniqueId}{self.category.uniqueId}{self.subcategory.uniqueId}{''.join(random.choice(string.digits) for _ in range(6))}"
             self.uniqueId = slugify(uid).replace("-", "")
         super(Post, self).save(*args, **kwargs)

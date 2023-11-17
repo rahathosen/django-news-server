@@ -22,7 +22,8 @@ class FeaturePostType(DjangoObjectType):
 class Query(graphene.ObjectType):
     all_feature = graphene.List(FeatureType)
     feature = graphene.Field(FeatureType, featureId = graphene.String())
-    featuer_category_by_featuerUID = graphene.List(FeatureCategoryType, featureUId = graphene.String())
+    featuer_categories_by_featuerUID = graphene.List(FeatureCategoryType, featureUId = graphene.String())
+    featuer_category = graphene.Field(FeatureCategoryType, categoryuId = graphene.String())
     feature_post_by_category = graphene.List(FeaturePostType, categoryuId = graphene.String())
     feature_posts = graphene.List(FeaturePostType)
     feature_post = graphene.Field(FeaturePostType, featurePostuId = graphene.String())
@@ -33,8 +34,11 @@ class Query(graphene.ObjectType):
     def resolve_feature(self, info, featureId, **kwargs):
         return Feature.objects.get(uniqueId=featureId, status=1)
     
-    def resolve_featuer_category_by_featuerUID(self, info, featureUId, **kwargs):
+    def resolve_featuer_categories_by_featuerUID(self, info, featureUId, **kwargs):
         return FeatureCategory.objects.filter(feature__uniqueId=featureUId, status=1)
+    
+    def resolve_featuer_category(self, info, categoryuId, **kwargs):
+        return FeatureCategory.objects.get(uniqueId=categoryuId, status=1)
     
     def resolve_feature_post_by_category(self, info, categoryuId, **kwargs):
         return FeaturePost.objects.filter(category__uniqueId=categoryuId, status=1)
