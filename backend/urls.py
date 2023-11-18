@@ -9,7 +9,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # For GraphQL
 from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
-from backend.sitemap import sitemapUrl
+from webInfo.sitemap import sitemapUrl
 
 urlpatterns = [
     path('admin/', admin.site.urls),
