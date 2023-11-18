@@ -80,7 +80,7 @@ class Advertisement(models.Model):
         verbose_name = 'Advertisement'
 
     def __str__(self):
-                return str(self.addBox.box_position_id) + " - " + str(self.add_company) + " - " + self.title
+                return str(self.addBox.a) + " - " + str(self.addBox.position) + " - " + str(self.add_company) + " - " + self.title
 
     def save(self, *args, **kwargs):
         if not self.uniqueId or not self.uniqueId.strip():
