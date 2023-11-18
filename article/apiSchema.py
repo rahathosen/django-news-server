@@ -34,11 +34,11 @@ class Query(graphene.ObjectType):
     last_week_popular_article  = graphene.List(ArticleType)
     last_month_popular_article = graphene.List(ArticleType)
 
-    popular_article_by_category_last_month = graphene.List(ArticleType, category_id=graphene.Int())
-    popular_article_by_writter = graphene.List(ArticleType, writter_id=graphene.Int())
+    popular_article_by_category_last_month = graphene.List(ArticleType, category_uId=graphene.String())
+    popular_article_by_writter = graphene.List(ArticleType, writter_uId=graphene.String())
 
-    related_article_by_category_last_month = graphene.List(ArticleType, category_id=graphene.Int())
-    related_article_by_writter_last_ten = graphene.List(ArticleType, writter_id=graphene.Int())
+    related_article_by_category_last_month = graphene.List(ArticleType, category_uId=graphene.String())
+    related_article_by_writter_last_ten = graphene.List(ArticleType, writter_uId=graphene.String())
 
 
     def resolve_articles_posts(self, info, first=None, skip=None, **kwargs):
@@ -71,9 +71,7 @@ class Query(graphene.ObjectType):
     
     def resolve_article_category(self, info, categoryuId, **kwargs):
         if categoryuId is not None:
-            obj = ArticleCategory.objects.get(uniqueId=categoryuId).filter(status=1)
-            obj.total_view = obj.total_view + 1
-            obj.save()
+            obj = ArticleCategory.objects.get(uniqueId=categoryuId, status = 1)
             return obj
         return None
     
@@ -89,47 +87,52 @@ class Query(graphene.ObjectType):
     def resolve_article_writter(self, writteruId, info, **kwargs):
         if writteruId is not None:
             obj = ArticleWritter.objects.get(uniqueId=writteruId)
-            obj.total_view = obj.total_view + 1
-            obj.save()
             return obj
         return None
 
     def resolve_article_by_category(self, info, categoryuId, **kwargs):
         if categoryuId is not None:
-            obj = Article.objects.filter(category__uniqueId=categoryuId).filter(status=1, editor_reviewed=1)
-            # obj.total_view = obj.total_view + 1
-            # obj.save()
+            obj = Article.objects.filter(category__uniqueId=categoryuId, status=1, editor_reviewed=1)
+
             return obj
         return None
     
     def resolve_article_by_writter(self, info, writteruId, **kwargs):
         if writteruId is not None:
-            obj = Article.objects.filter(writter__uniqueId=writteruId).filter(status=1, editor_reviewed=1)
-            # obj.total_view = obj.total_view + 1
-            # obj.save()
+            obj = Article.objects.filter(writter__uniqueId=writteruId, status=1, editor_reviewed=1)
             return obj
         return None
     
     def resolve_today_articles(self, info, **kwargs):
-        return Article.objects.filter(created_at__date=datetime.date.today()).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
+        return Article.objects.filter(created_at__date=datetime.date.today(),status=1, editor_reviewed=1)
     
     def resolve_last_week_popular_article(self, info, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=7)).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
+        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=7),status=1, editor_reviewed=1).order_by(total_view='DESC')
     
     def resolve_last_month_popular_article(self, info, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30)).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
+        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30),status=1, editor_reviewed=1)
     
-    def resolve_popular_article_by_category_last_month(self, info, category_id, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30), category_id=category_id).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
+    def resolve_popular_article_by_category_last_month(self, info, category_uId, **kwargs):
+        if category_uId is not None:
+            obj = Article.objects.filter(category__uniqueId=category_uId, status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
+            return obj
+     
+    def resolve_popular_article_by_writter(self, info, writter_uId, **kwargs):
+        if writter_uId is not None:
+            obj = Article.objects.filter(writter__uniqueId=writter_uId, status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
+            return obj
     
-    def resolve_popular_article_by_writter(self, info, writter_id, **kwargs):
-        return Article.objects.filter(writter_id=writter_id).order_by(total_view='DESC').filter(status=1, editor_reviewed=1)
+    def resolve_related_article_by_category_last_month(self, info, category_uId, **kwargs):
+        if category_uId is not None:
+            obj = Article.objects.filter(category__uniqueId=category_uId, status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
+            return obj
+        return None
     
-    def resolve_related_article_by_category_last_month(self, info, category_id, **kwargs):
-        return Article.objects.filter(created_at__gte=datetime.date.today()-datetime.timedelta(days=30), category_id=category_id).filter(status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
-    
-    def resolve_related_article_by_writter_last_ten(self, info, writter_id, **kwargs):
-        return Article.objects.filter(writter_id=writter_id).filter(status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
+    def resolve_related_article_by_writter_last_ten(self, info, writter_uId, **kwargs):
+        if writter_uId is not None:
+            obj = Article.objects.filter(writter__uniqueId=writter_uId, status=1, editor_reviewed=1).order_by(total_view='DESC')[:10]
+            return obj
+        return None
 
 class Mutation(graphene.ObjectType):
     pass   

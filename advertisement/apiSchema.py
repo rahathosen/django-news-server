@@ -21,13 +21,23 @@ class AdvertisementType(DjangoObjectType):
 class Query(graphene.ObjectType):
     ad_boxes = graphene.List(AdBoxType)
     ads_by_Box = graphene.Field(AdvertisementType, boxuId=graphene.String())
+    ads_by_Box_position = graphene.Field(AdvertisementType, boxPosition=graphene.String())
     
 
     def resolve_ad_boxes(self, info,**kwargs):
         return AdBox.objects.all()
     
     def resolve_ads_by_Box(self, info, boxuId, **kwargs):
-        return Advertisement.objects.filter(addBox__uniqueId=boxuId).first()
+        if boxuId is not None:
+            obj = Advertisement.objects.filter(addBox__uniqueId=boxuId).first()
+            return obj
+        return None
+    
+    def resolve_ads_by_Box_position(self, info, boxPosition, **kwargs):
+        if boxPosition is not None:
+            obj = Advertisement.objects.filter(addBox__position=boxPosition).first()
+            return obj
+        return None
     
     
 class Mutation(graphene.ObjectType):

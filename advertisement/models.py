@@ -18,12 +18,13 @@ YESNO = (
 class AdBox(models.Model):
     uniqueId = models.CharField(unique=True, max_length=20, blank=False, null=False, verbose_name='Unique Id')
     position =  models.CharField(max_length=50, blank=False, null=False)
+    box_position_id = models.PositiveIntegerField(blank=False, null=False, unique=True, verbose_name='Must Give a Box Position Id(Unique))')
     size =  models.CharField(max_length=50, blank=False, null=False)
     active = models.IntegerField(choices=YESNO, default = 0)
     total_view = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["total_view"]
+        ordering = ["box_position_id"]
         verbose_name_plural = 'Advertisement Boxes'
         verbose_name = 'Advertisement Box'
     
@@ -79,11 +80,11 @@ class Advertisement(models.Model):
         verbose_name = 'Advertisement'
 
     def __str__(self):
-                return self.title + " - " + str(self.add_company) + " - " + str(self.addBox)
+                return str(self.addBox.box_position_id) + " - " + str(self.add_company) + " - " + self.title
 
     def save(self, *args, **kwargs):
         if not self.uniqueId or not self.uniqueId.strip():
-            uid = f"{self.addBox.uniqueId}{self.add_company.uniqueId}{''.join(random.choice(string.digits) for _ in range(3))}"
+            uid = f"{self.addBox.box_position_id}{self.add_company.uniqueId}{''.join(random.choice(string.digits) for _ in range(3))}"
             self.uniqueId = slugify(uid).replace("-", "")
         super(Advertisement, self).save(*args, **kwargs)
     

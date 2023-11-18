@@ -5,12 +5,12 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.exceptions import ValidationError
 
-from reporter.models import Reporter
+from reporter.models import *
 from news.models import Post
 from categories.models import *
-from article.models import ArticleCategory, ArticleWritter, Article 
-from feature.models import Feature, FeatureCategory, FeaturePost
-from advertisement.models import Advertisement
+from article.models import *
+from feature.models import *
+from advertisement.models import *
 
 STATUS = (
     (0,"Draft"),
