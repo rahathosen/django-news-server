@@ -106,17 +106,16 @@ class Query(graphene.ObjectType):
     
     def resolve_breakingNews(self, info, **kwargs):
         objs = BreakingNews.objects.all()
-        
+        o = []
         for obj in objs:
-            o = []
-            if obj.end_at < timezone.now():
-                return None
+           
             if obj.end_at > timezone.now():
                 print(obj.end_at)
                 print(timezone.now())
                 o.append(obj)
-            return o
-        return None
+        print(o)
+            # return o
+        return o
     
     def resolve_mainNews(self, info, **kwargs):
         obj = HeadNews.objects.last()
