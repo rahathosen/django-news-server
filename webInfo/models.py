@@ -95,7 +95,7 @@ class HeadLine(models.Model):
         return f"'Last updated' + ' - ' + {self.updated_at}"
     
 class BreakingNews(models.Model):
-    items = models.ManyToManyField(Post, blank=True, verbose_name='Breaking News')
+    post = models.ForeignKey(Post, blank=False, default= 1, on_delete=models.DO_NOTHING, verbose_name='Breaking News')
     updated_at = models.DateTimeField(auto_now=True)
     end_at = models.DateTimeField(blank=False)
 
@@ -105,7 +105,7 @@ class BreakingNews(models.Model):
         verbose_name = 'Breaking News'
 
     def __str__(self):
-        return f"'Last updated' + ' - ' + {self.updated_at}"
+        return f"{self.post.title} -'Last updated' : {self.updated_at}"
     
 class HeadNews(models.Model):
     headNews = models.ForeignKey(Post, on_delete=models.DO_NOTHING, default=1, blank=False, verbose_name='Head/Main News')

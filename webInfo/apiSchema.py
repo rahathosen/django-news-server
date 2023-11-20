@@ -1,5 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
+from datetime import *
+from django.utils import timezone
 
 from webInfo.models import *
 from news.models import *
@@ -83,7 +85,7 @@ class Query(graphene.ObjectType):
     websiteInfo = graphene.Field(WebsiteInfoType)
     navigation = graphene.Field(NavigationType)
     headLine = graphene.List(HeadLineType)
-    breakingNews = graphene.Field(BreakingNewsType)
+    breakingNews = graphene.List(BreakingNewsType)
     mainNews = graphene.Field(HeadNewsType)
     homeHighlightedNews = graphene.Field(HomeHighlightedNewsType)
     sectionBox = graphene.List(SectionBoxType)   
@@ -103,8 +105,18 @@ class Query(graphene.ObjectType):
         return obj
     
     def resolve_breakingNews(self, info, **kwargs):
-        oj = BreakingNews.objects.last()
-        return oj
+        objs = BreakingNews.objects.all()
+        
+        for obj in objs:
+            o = []
+            if obj.end_at < timezone.now():
+                return None
+            if obj.end_at > timezone.now():
+                print(obj.end_at)
+                print(timezone.now())
+                o.append(obj)
+            return o
+        return None
     
     def resolve_mainNews(self, info, **kwargs):
         obj = HeadNews.objects.last()
