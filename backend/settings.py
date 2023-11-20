@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Third party apps
+    'django.contrib.sitemaps',
     'graphene_django',
     'ckeditor',
     "cloudvault",

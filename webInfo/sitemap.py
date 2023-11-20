@@ -11,43 +11,43 @@ class NewsSitemap(Sitemap):
     changefreq = 'daily'
     priority = 0.5
     def items(self):
-        return Post.objects.filter(status=1).order_by('-created_at')
+        return Post.objects.filter(status=1, editor_reviewed=1).order_by('-created_at')
     
     def location(self, obj):
         return f"/{obj.uniqueId}/"
     
     def lastmod(self, obj):
-        return obj.updated_at.filter(status=1).order_by('-created_at')
+        return obj.updated_at
     
 class ArticleSiteMap(Sitemap):
     changefreq = 'daily'
     priority = 0.9
     def items(self):
-        return Article.objects.filter(status=1).order_by('-created_at')
+        return Article.objects.filter(status=1, editor_reviewed=1).order_by('-created_at')
     
     def location(self, obj):
         return f"/{obj.uniqueId}/"
     
     def lastmod(self, obj):
-        return obj.updated_at.filter(status=1).order_by('-created_at')
+        return obj.updated_at
     
-class FeatureSiteMap(Sitemap):
+class FeaturePostSiteMap(Sitemap):
     changefreq = 'daily'
     priority = 1
     def items(self):
-        return Feature.objects.filter(status=1).order_by('-created_at')
+        return FeaturePost.objects.filter(status=1, editor_reviewed=1).order_by('-created_at')
     
     def location(self, obj):
         return f"/{obj.uniqueId}/"
     
     def lastmod(self, obj):
-        return obj.updated_at.filter(status=1).order_by('-created_at')
+        return obj.updated_at
 
 
 sitemaps = {
 'Post': NewsSitemap(),
 'Article': ArticleSiteMap(),
-'Feature': FeatureSiteMap()
+'Feature': FeaturePostSiteMap()
 }
 
 from django.contrib.sitemaps.views import sitemap
