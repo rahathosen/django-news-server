@@ -16,7 +16,7 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '*']
 
@@ -152,6 +152,7 @@ USE_TZ = True
 # Base url to serve media files
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -172,5 +173,4 @@ CLOUDINARY = {
 #     'https://dailyudayan.com',
 #     'https://www.dailyudayan.com',
 #     'http://dailyudayan.com',
-
 # ]

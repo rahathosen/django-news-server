@@ -19,8 +19,8 @@ from django.contrib.auth.models import Group, Permission
 #     user_group = Group(name="Editors")
 #     user_group.save()
 
-# class PostAdmin(ImportExportModelAdmin):
-#     resource_class = PostResource
+class PostAdmin(ImportExportModelAdmin):
+    resource_class = PostResource
 
 class PostAdminExclude(admin.ModelAdmin):
     search_fields = ['title', 'description', 'details']
@@ -41,9 +41,9 @@ class PostAdminExclude(admin.ModelAdmin):
 
 
 # Register your models here.
-admin.site.register(Post, PostAdminExclude)
+# admin.site.register(Post, PostAdminExclude)
 
-# if settings.DEBUG: 
-#     admin.site.register(Post, PostAdmin)
-# else:
-    # admin.site.register(Post, PostAdminExclude)
+if settings.DEBUG: 
+    admin.site.register(Post, PostAdmin)
+else:
+    admin.site.register(Post, PostAdminExclude)
