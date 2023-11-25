@@ -49,6 +49,9 @@ INSTALLED_APPS = [
 
 if DEBUG:
     INSTALLED_APPS += [
+    # White noise for static files
+    "whitenoise.runserver_nostatic",
+    "django.contrib.staticfiles",
     # Third party apps 
     'import_export',
 
@@ -58,6 +61,7 @@ if DEBUG:
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware", # For whitenoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -150,9 +154,13 @@ USE_TZ = True
 # MEDIA_URL = '/media/'
 
 # Base url to serve media files
+STATIC_HOST = os.environ.get("DJANGO_STATIC_HOST", "")
+STATIC_URL = STATIC_HOST + "/static/"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
