@@ -23,7 +23,7 @@ YESNO = (
 
 class WebsiteInfo(models.Model):
     title = models.CharField(max_length=50, null=False, blank=False, verbose_name='Website Title')
-    tagLine = models.TextField(blank=True, default= "", verbose_name='Tag Line/ Slogan')
+    tagLine = models.CharField(max_length=50, blank=True, default= "", verbose_name='Tag Line/ Slogan')
     url = models.CharField(max_length=50,blank=True, default= "", verbose_name='Website URL' )
     logo = models.ImageField(upload_to='website_info/logo',blank=True, default= "", verbose_name='Website Logo' )
     favicon = models.ImageField(upload_to='website_info/icon',blank=True, default= "", verbose_name='Website Favicon icon')
@@ -50,6 +50,7 @@ class WebsiteInfo(models.Model):
     advertisement_policy = RichTextField(blank=True, default= "")
     privacy_policy = RichTextField(blank=True,  verbose_name='Privacy Policy / Terms of Use', default= "")
     comment_policy = RichTextField(blank=True,  default= "")
+    openion_gideline = RichTextField(blank=True,  default= "")
     android_app_url = models.CharField(max_length=200,blank=True, default= "")
     ios_app_url = models.CharField(max_length=200,blank=True, default= "")
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
