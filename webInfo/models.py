@@ -16,6 +16,10 @@ STATUS = (
     (0,"Draft"),
     (1,"Publish")
 )
+SIDE = (
+    (0,"Left"),
+    (1,"Right")
+)
 YESNO = (
     (0,"No"),
     (1,"Yes")
@@ -134,6 +138,7 @@ class HomeHighlightedNews(models.Model):
     
 class SectionBox(models.Model):
     serial = models.PositiveIntegerField(default=0, blank=False, verbose_name='Serial Number')
+    side = models.IntegerField(choices=SIDE, default=0, verbose_name='recent news side')
     background_color = models.CharField(max_length=10, blank=True, verbose_name='Background Color(Must be in Hexadecimal)')
     category = models.ForeignKey(NewsCategory, default=1, on_delete=models.DO_NOTHING, blank=False)
     image = models.ImageField(upload_to='sectionBox/images/webp',blank=True, null=True)   
