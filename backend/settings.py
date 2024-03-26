@@ -2,17 +2,12 @@ from pathlib import Path
 import os
 import dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -34,7 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'graphene_django',
     'ckeditor',
-    "cloudvault",
 
     # Created apps
     'advertisement',
@@ -149,16 +143,15 @@ USE_TZ = True
 
 
 # Path where media is stored
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 # Base url to serve media files
-STATIC_HOST = os.environ.get("DJANGO_STATIC_HOST", "")
-STATIC_URL = STATIC_HOST + "/static/"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
-#STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -168,14 +161,6 @@ GRAPHENE = {
 }
 
 
-DEFAULT_FILE_STORAGE = "cloudvault.cloud_storage.CloudinaryStorage"
-# Configure Cloudinary
-CLOUDINARY = {
-    "cloud_name": os.environ['CLOUD_NAME'],
-    "api_key": os.environ['API_KEY'],
-    "api_secret": os.environ['API_SECRET']
-
-}
 # CSRF_TRUSTED_ORIGINS = [ 
 #     'https://dailyudayan.com',
 #     'https://www.dailyudayan.com',
